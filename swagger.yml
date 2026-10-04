@@ -1,0 +1,1179 @@
+# @format
+
+swagger: "2.0"
+info:
+  title: MinIO Console Server
+  version: 0.1.0
+consumes:
+  - application/json
+produces:
+  - application/json
+schemes:
+  - http
+  - ws
+basePath: /api/v1
+# We are going to be taking `Authorization: Bearer TOKEN` header for our authentication
+securityDefinitions:
+  key:
+    type: oauth2
+    flow: accessCode
+    authorizationUrl: http://min.io
+    tokenUrl: http://min.io
+  anonymous:
+    name: X-Anonymous
+    in: header
+    type: apiKey
+# Apply the key security definition to all APIs
+security:
+  - key: [ ]
+parameters:
+  limit:
+    name: limit
+    in: query
+    type: number
+    format: int32
+    default: 20
+  offset:
+    name: offset
+    in: query
+    type: number
+    format: int32
+    default: 0
+paths:
+  /login:
+    get:
+      summary: Returns login strategy, form or sso.
+      operationId: LoginDetail
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/loginDetails"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      # Exclude this API from the authentication requirement
+      security: [ ]
+      tags:
+        - Auth
+    post:
+      summary: Login to Console
+      operationId: Login
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/loginRequest"
+      responses:
+        204:
+          description: A successful login.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      # Exclude this API from the authentication requirement
+      security: [ ]
+      tags:
+        - Auth
+  /logout:
+    post:
+      summary: Logout from Console.
+      operationId: Logout
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/logoutRequest"
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Auth
+  /session:
+    get:
+      summary: Endpoint to check if your session is still valid
+      operationId: SessionCheck
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/sessionResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Auth
+  /buckets:
+    get:
+      summary: List Buckets
+      operationId: ListBuckets
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listBucketsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Bucket
+    post:
+      summary: Make bucket
+      operationId: MakeBucket
+      parameters:
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/makeBucketRequest"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/makeBucketsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Bucket
+  /buckets/{name}:
+    get:
+      summary: Bucket Info
+      operationId: BucketInfo
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/bucket"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Bucket
+  /buckets/{bucket_name}/objects:
+    get:
+      summary: List Objects
+      security:
+        - key: [ ]
+        - anonymous: [ ]
+      operationId: ListObjects
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: false
+          type: string
+        - name: recursive
+          in: query
+          required: false
+          type: boolean
+        - name: with_versions
+          in: query
+          required: false
+          type: boolean
+        - name: with_metadata
+          in: query
+          required: false
+          type: boolean
+        - $ref: "#/parameters/limit"
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/listObjectsResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Object
+    delete:
+      summary: Delete Object
+      operationId: DeleteObject
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: true
+          type: string
+        - name: version_id
+          in: query
+          required: false
+          type: string
+        - name: recursive
+          in: query
+          required: false
+          type: boolean
+        - name: all_versions
+          in: query
+          required: false
+          type: boolean
+        - name: non_current_versions
+          in: query
+          required: false
+          type: boolean
+        - name: bypass
+          in: query
+          required: false
+          type: boolean
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Object
+  /buckets/{bucket_name}/delete-objects:
+    post:
+      summary: Delete Multiple Objects
+      operationId: DeleteMultipleObjects
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: all_versions
+          in: query
+          required: false
+          type: boolean
+        - name: bypass
+          in: query
+          required: false
+          type: boolean
+        - name: files
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/deleteFile"
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Object
+  /buckets/{bucket_name}/objects/upload:
+    post:
+      summary: Uploads an Object.
+      security:
+        - key: [ ]
+        - anonymous: [ ]
+      consumes:
+        - multipart/form-data
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          type: string
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Object
+  /buckets/{bucket_name}/objects/download-multiple:
+    post:
+      summary: Download Multiple Objects
+      operationId: DownloadMultipleObjects
+      security:
+        - key: [ ]
+        - anonymous: [ ]
+      produces:
+        - application/octet-stream
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: objectList
+          in: body
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: file
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Object
+  /buckets/{bucket_name}/objects/download:
+    get:
+      summary: Download Object
+      operationId: Download Object
+      security:
+        - key: [ ]
+        - anonymous: [ ]
+      produces:
+        - application/octet-stream
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: true
+          type: string
+        - name: version_id
+          in: query
+          required: false
+          type: string
+        - name: preview
+          in: query
+          required: false
+          type: boolean
+          default: false
+        - name: override_file_name
+          in: query
+          required: false
+          type: string
+          default: ""
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: file
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Object
+  /buckets/{bucket_name}/objects/share:
+    get:
+      summary: Shares an Object on a url
+      operationId: ShareObject
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: true
+          type: string
+        - name: version_id
+          in: query
+          required: true
+          type: string
+        - name: expires
+          in: query
+          required: false
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: string
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Object
+  /buckets/{bucket_name}/objects/tags:
+    put:
+      summary: Put Object's tags
+      operationId: PutObjectTags
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: true
+          type: string
+        - name: version_id
+          in: query
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/putObjectTagsRequest"
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Object
+  /buckets/{bucket_name}/objects/restore:
+    put:
+      summary: Restore Object to a selected version
+      operationId: PutObjectRestore
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: true
+          type: string
+        - name: version_id
+          in: query
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Object
+  /buckets/{bucket_name}/objects/metadata:
+    get:
+      summary: Gets the metadata of an object
+      operationId: GetObjectMetadata
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: true
+          type: string
+        - name: versionID
+          in: query
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/metadata"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Object
+  /buckets/{name}/quota:
+    get:
+      summary: Get Bucket Quota
+      operationId: GetBucketQuota
+      parameters:
+        - name: name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/bucketQuota"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Bucket
+  /buckets/{bucket_name}/versioning:
+    get:
+      summary: Bucket Versioning
+      operationId: GetBucketVersioning
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/bucketVersioningResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Bucket
+    put:
+      summary: Set Bucket Versioning
+      operationId: SetBucketVersioning
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: body
+          in: body
+          required: true
+          schema:
+            $ref: "#/definitions/setBucketVersioning"
+      responses:
+        201:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Bucket
+  /buckets/{bucket_name}/rewind/{date}:
+    get:
+      summary: Get objects in a bucket for a rewind date
+      operationId: GetBucketRewind
+      parameters:
+        - name: bucket_name
+          in: path
+          required: true
+          type: string
+        - name: date
+          in: path
+          required: true
+          type: string
+        - name: prefix
+          in: query
+          required: false
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/rewindResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Bucket
+  /buckets/max-share-exp:
+    get:
+      summary: Get max expiration time for share link in seconds
+      operationId: GetMaxShareLinkExp
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/maxShareLinkExpResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Bucket
+  /admin/info:
+    get:
+      summary: Returns information about the deployment
+      operationId: AdminInfo
+      parameters:
+        - name: defaultOnly
+          in: query
+          required: false
+          type: boolean
+          default: false
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            $ref: "#/definitions/adminInfoResponse"
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - System
+
+  /license/acknowledge:
+    get:
+      summary: Acknowledge the license
+      operationId: LicenseAcknowledge
+      responses:
+        200:
+          description: A successful response.
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - License
+
+  /download-shared-object/{url}:
+    get:
+      summary: Downloads an object from a presigned url
+      operationId: DownloadSharedObject
+      security: [ ]
+      produces:
+        - application/octet-stream
+      parameters:
+        - name: url
+          in: path
+          required: true
+          type: string
+      responses:
+        200:
+          description: A successful response.
+          schema:
+            type: file
+        default:
+          description: Generic error response.
+          schema:
+            $ref: "#/definitions/ApiError"
+      tags:
+        - Public
+
+definitions:
+  bucketAccess:
+    type: string
+    enum:
+      - PRIVATE
+      - PUBLIC
+      - CUSTOM
+    default: PRIVATE
+  bucket:
+    type: object
+    required:
+      - name
+    properties:
+      name:
+        type: string
+        minLength: 3
+      size:
+        type: integer
+        format: int64
+      access:
+        $ref: "#/definitions/bucketAccess"
+      definition:
+        type: string
+      rw_access:
+        type: object
+        properties:
+          write:
+            type: boolean
+          read:
+            type: boolean
+      objects:
+        type: integer
+        format: int64
+      details:
+        type: object
+        properties:
+          versioning:
+            type: boolean
+          versioningSuspended:
+            type: boolean
+          locking:
+            type: boolean
+          replication:
+            type: boolean
+          tags:
+            type: object
+            additionalProperties:
+              type: string
+          quota:
+            type: object
+            properties:
+              quota:
+                type: integer
+                format: int64
+              type:
+                type: string
+                enum:
+                  - hard
+      creation_date:
+        type: string
+
+  listBucketsResponse:
+    type: object
+    properties:
+      buckets:
+        type: array
+        items:
+          $ref: "#/definitions/bucket"
+        title: list of resulting buckets
+      total:
+        type: integer
+        format: int64
+        title: number of buckets accessible to the user
+  objectRetentionUnit:
+    type: string
+    enum:
+      - days
+      - years
+  objectRetentionMode:
+    type: string
+    enum:
+      - governance
+      - compliance
+  getBucketRetentionConfig:
+    type: object
+    properties:
+      mode:
+        $ref: "#/definitions/objectRetentionMode"
+      unit:
+        $ref: "#/definitions/objectRetentionUnit"
+      validity:
+        type: integer
+        format: int32
+  listObjectsResponse:
+    type: object
+    properties:
+      objects:
+        type: array
+        items:
+          $ref: "#/definitions/bucketObject"
+        title: list of resulting objects
+      total:
+        type: integer
+        format: int64
+        title: number of objects
+
+  bucketObject:
+    type: object
+    properties:
+      name:
+        type: string
+      size:
+        type: integer
+        format: int64
+      content_type:
+        type: string
+      last_modified:
+        type: string
+      is_latest:
+        type: boolean
+      is_delete_marker:
+        type: boolean
+      version_id:
+        type: string
+      user_tags:
+        type: object
+        additionalProperties:
+          type: string
+      expiration:
+        type: string
+      expiration_rule_id:
+        type: string
+      legal_hold_status:
+        type: string
+      retention_mode:
+        type: string
+      retention_until_date:
+        type: string
+      etag:
+        type: string
+      tags:
+        type: object
+        additionalProperties:
+          type: string
+      metadata:
+        type: object
+        additionalProperties:
+          type: string
+      user_metadata:
+        type: object
+        additionalProperties:
+          type: string
+
+  makeBucketRequest:
+    type: object
+    required:
+      - name
+    properties:
+      name:
+        type: string
+  ApiError:
+    type: object
+    properties:
+      message:
+        type: string
+      detailedMessage:
+        type: string
+  makeBucketsResponse:
+    type: object
+    properties:
+      bucketName:
+        type: string
+  bucketQuota:
+    type: object
+    properties:
+      quota:
+        type: integer
+      type:
+        type: string
+        enum:
+          - hard
+  loginResponse:
+    type: object
+    properties:
+      sessionId:
+        type: string
+      IDPRefreshToken:
+        type: string
+  loginDetails:
+    type: object
+    properties:
+      loginStrategy:
+        type: string
+        enum: [ form, service-account, redirect-service-account ]
+      redirectRules:
+        type: array
+        items:
+          $ref: "#/definitions/redirectRule"
+      isK8S:
+        type: boolean
+      animatedLogin:
+        type: boolean
+  loginRequest:
+    type: object
+    properties:
+      accessKey:
+        type: string
+      secretKey:
+        type: string
+      sts:
+        type: string
+      features:
+        type: object
+        properties:
+          hide_menu:
+            type: boolean
+  logoutRequest:
+    type: object
+    properties:
+      state:
+        type: string
+  # Structure that holds the `Bearer {TOKEN}` present on authenticated requests
+  principal:
+    type: object
+    properties:
+      STSAccessKeyID:
+        type: string
+      STSSecretAccessKey:
+        type: string
+      STSSessionToken:
+        type: string
+      accountAccessKey:
+        type: string
+      hm:
+        type: boolean
+      ob:
+        type: boolean
+      customStyleOb:
+        type: string
+  sessionResponse:
+    type: object
+    properties:
+      features:
+        type: array
+        items:
+          type: string
+      status:
+        type: string
+        enum: [ ok ]
+      operator:
+        type: boolean
+      distributedMode:
+        type: boolean
+      serverEndPoint:
+        type: string
+      permissions:
+        type: object
+        additionalProperties:
+          type: array
+          items:
+            type: string
+      customStyles:
+        type: string
+      allowResources:
+        type: array
+        items:
+          $ref: "#/definitions/permissionResource"
+      envConstants:
+        $ref: "#/definitions/environmentConstants"
+
+  widgetResult:
+    type: object
+    properties:
+      metric:
+        type: object
+        additionalProperties:
+          type: string
+      values:
+        type: array
+        items: { }
+  resultTarget:
+    type: object
+    properties:
+      legendFormat:
+        type: string
+      resultType:
+        type: string
+      result:
+        type: array
+        items:
+          $ref: "#/definitions/widgetResult"
+  widget:
+    type: object
+    properties:
+      title:
+        type: string
+      type:
+        type: string
+      id:
+        type: integer
+        format: int32
+      options:
+        type: object
+        properties:
+          reduceOptions:
+            type: object
+            properties:
+              calcs:
+                type: array
+                items:
+                  type: string
+      targets:
+        type: array
+        items:
+          $ref: "#/definitions/resultTarget"
+  adminInfoResponse:
+    type: object
+    properties:
+      buckets:
+        type: integer
+      objects:
+        type: integer
+      usage:
+        type: integer
+      advancedMetricsStatus:
+        type: string
+        enum:
+          - not configured
+          - available
+          - unavailable
+      widgets:
+        type: array
+        items:
+          $ref: "#/definitions/widget"
+      servers:
+        type: array
+        items:
+          $ref: "#/definitions/serverProperties"
+      backend:
+        $ref: "#/definitions/BackendProperties"
+  serverProperties:
+    type: object
+    properties:
+      state:
+        type: string
+      endpoint:
+        type: string
+      uptime:
+        type: integer
+      version:
+        type: string
+      commitID:
+        type: string
+      poolNumber:
+        type: integer
+      network:
+        type: object
+        additionalProperties:
+          type: string
+      drives:
+        type: array
+        items:
+          $ref: "#/definitions/serverDrives"
+  serverDrives:
+    type: object
+    properties:
+      uuid:
+        type: string
+      state:
+        type: string
+      endpoint:
+        type: string
+      drivePath:
+        type: string
+      rootDisk:
+        type: boolean
+      healing:
+        type: boolean
+      model:
+        type: string
+      totalSpace:
+        type: integer
+      usedSpace:
+        type: integer
+      availableSpace:
+        type: integer
+  BackendProperties:
+    type: object
+    properties:
+      backendType:
+        type: string
+      rrSCParity:
+        type: integer
+      standardSCParity:
+        type: integer
+      onlineDrives:
+        type: integer
+      offlineDrives:
+        type: integer
+  bucketVersioningResponse:
+    type: object
+    properties:
+      status:
+        type: string
+      MFADelete:
+        type: string
+      excludedPrefixes:
+        type: array
+        items:
+          type: object
+          properties:
+            prefix:
+              type: string
+      excludeFolders:
+        type: boolean
+
+  setBucketVersioning:
+    type: object
+    properties:
+      enabled:
+        type: boolean
+      excludePrefixes:
+        type: array
+        maxLength: 10
+        items:
+          type: string
+      excludeFolders:
+        type: boolean
+  putObjectTagsRequest:
+    type: object
+    properties:
+      tags:
+        additionalProperties:
+          type: string
+
+  deleteFile:
+    type: object
+    properties:
+      path:
+        type: string
+      versionID:
+        type: string
+      recursive:
+        type: boolean
+
+  rewindItem:
+    type: object
+    properties:
+      last_modified:
+        type: string
+      size:
+        type: integer
+        format: int64
+      version_id:
+        type: string
+      delete_flag:
+        type: boolean
+      action:
+        type: string
+      name:
+        type: string
+      is_latest:
+        type: boolean
+
+  rewindResponse:
+    type: object
+    properties:
+      objects:
+        type: array
+        items:
+          $ref: "#/definitions/rewindItem"
+  metadata:
+    type: object
+    properties:
+      objectMetadata:
+        type: object
+        additionalProperties: true
+
+  permissionResource:
+    type: object
+    properties:
+      resource:
+        type: string
+      conditionOperator:
+        type: string
+      prefixes:
+        type: array
+        items:
+          type: string
+  environmentConstants:
+    type: object
+    properties:
+      maxConcurrentUploads:
+        type: integer
+      maxConcurrentDownloads:
+        type: integer
+
+  redirectRule:
+    type: object
+    properties:
+      redirect:
+        type: string
+      displayName:
+        type: string
+      serviceType:
+        type: string
+
+  maxShareLinkExpResponse:
+    type: object
+    properties:
+      exp:
+        type: number
+        format: int64
+    required:
+      - exp
+

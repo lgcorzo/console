@@ -1,0 +1,236 @@
+PWD := $(shell pwd)
+GOPATH := $(shell go env GOPATH)
+# Sets the build version based on the output of the following command, if we are building for a tag, that's the build else it uses the current git branch as the build
+BUILD_VERSION:=$(shell git describe --exact-match --tags $(git log -n1 --pretty='%h') 2>/dev/null || git rev-parse --abbrev-ref HEAD 2>/dev/null)
+BUILD_TIME:=$(shell date 2>/dev/null)
+TAG ?= "minio/console:$(BUILD_VERSION)-dev"
+MINIO_VERSION ?= "quay.io/minio/minio:latest"
+TARGET_BUCKET ?= "target"
+NODE_VERSION := $(shell cat .nvmrc)
+
+default: console
+
+.PHONY: console
+console:
+	@echo "Building Console binary to './console'"
+	@(GO111MODULE=on CGO_ENABLED=0 go build -trimpath --tags=kqueue --ldflags "-s -w" -o console ./cmd/console)
+
+getdeps:
+	@mkdir -p ${GOPATH}/bin
+	@echo "Installing golangci-lint" && curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(GOPATH)/bin
+
+verifiers: getdeps fmt lint
+
+fmt:
+	@echo "Running $@ check"
+	@(env bash $(PWD)/verify-gofmt.sh)
+
+crosscompile:
+	@(env bash $(PWD)/cross-compile.sh $(arg1))
+
+lint:
+	@echo "Running $@ check"
+	@GO111MODULE=on ${GOPATH}/bin/golangci-lint cache clean
+	@GO111MODULE=on ${GOPATH}/bin/golangci-lint run --timeout=5m --config ./.golangci.yml
+
+lint-fix: getdeps ## runs golangci-lint suite of linters with automatic fixes
+	@echo "Running $@ check"
+	@GO111MODULE=on ${GOPATH}/bin/golangci-lint run --timeout=5m --config ./.golangci.yml --fix
+
+install: console
+	@echo "Installing console binary to '$(GOPATH)/bin/console'"
+	@mkdir -p $(GOPATH)/bin && cp -f $(PWD)/console $(GOPATH)/bin/console
+	@echo "Installation successful. To learn more, try \"console --help\"."
+
+swagger-gen: clean-swagger swagger-console apply-gofmt
+	@echo "Done Generating swagger server code from yaml"
+
+apply-gofmt:
+	@echo "Applying gofmt to all generated an existing files"
+	@GO111MODULE=on gofmt -w .
+
+clean-swagger:
+	@echo "cleaning"
+	@rm -rf models
+	@rm -rf api/operations
+
+swagger-console:
+	@echo "Generating swagger server code from yaml"
+	@swagger generate server -A console --main-package=management --server-package=api --exclude-main -P models.Principal -f ./swagger.yml -r NOTICE
+	@echo "Ensure basic install"
+	@(cd web-app; yarn; cd ..)
+	@echo "Generating typescript api"
+	@make swagger-typescript-api path="../swagger.yml" output="./src/api" name="consoleApi.ts"
+	@git restore api/server.go
+
+swagger-typescript-api:
+	@(cd web-app; yarn swagger-typescript-api -p $(path) -o $(output) -n $(name) --custom-config ../generator.config.js; cd ..)
+
+assets:
+	@(if [ -f "${NVM_DIR}/nvm.sh" ]; then \. "${NVM_DIR}/nvm.sh" && nvm install && nvm use && npm install -g yarn ; fi &&\
+	  cd web-app; corepack enable; yarn install --prefer-offline; make build-static; yarn prettier --write . --log-level warn; cd ..)
+
+test-integration:
+	@(docker stop pgsqlcontainer || true)
+	@(docker stop minio || true)
+	@(docker stop minio2 || true)
+	@(docker network rm mynet123 || true)
+	@echo "create docker network to communicate containers MinIO & PostgreSQL"
+	@(docker network create --subnet=173.18.0.0/29 mynet123)
+	@echo "docker run with MinIO Version below:"
+	@echo $(MINIO_VERSION)
+	@echo "MinIO 1"
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 --net=mynet123 -d --name minio --rm -p 9000:9000 -p 9091:9091 -e MINIO_KMS_SECRET_KEY=my-minio-key:OSMM+vkKUTCvQs9YL/CVMIMt43HFhkUpqJxTmGl6rYw= $(MINIO_VERSION) server /data{1...4} --console-address ':9091' && sleep 5)
+	@echo "MinIO 2"
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 --net=mynet123 -d --name minio2 --rm -p 9001:9001 -p 9092:9092 -e MINIO_KMS_SECRET_KEY=my-minio-key:OSMM+vkKUTCvQs9YL/CVMIMt43HFhkUpqJxTmGl6rYw= $(MINIO_VERSION) server /data{1...4} --address ':9001' --console-address ':9092' && sleep 5)
+	@echo "Postgres"
+	@(docker run --net=mynet123 --ip=173.18.0.4 --name pgsqlcontainer --rm -p 5432:5432 -e POSTGRES_PASSWORD=password -d postgres && sleep 5)
+	@echo "execute test and get coverage for test-integration:"
+	@(cd integration && go test -coverpkg=../api -c -tags testrunmain . && mkdir -p coverage &&  ./integration.test -test.v -test.run "^Test*" -test.coverprofile=coverage/system.out)
+	@(docker stop pgsqlcontainer)
+	@(docker stop minio)
+	@(docker stop minio2)
+	@(docker network rm mynet123)
+
+test-replication:
+	@(docker stop minio || true)
+	@(docker stop minio1 || true)
+	@(docker stop minio2 || true)
+	@(docker network rm mynet123 || true)
+	@(docker network create mynet123)
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 \
+	  --net=mynet123 -d \
+	  --name minio \
+	  --rm \
+	  -p 9000:9000 \
+	  -p 6000:6000 \
+	  -e MINIO_KMS_SECRET_KEY=my-minio-key:OSMM+vkKUTCvQs9YL/CVMIMt43HFhkUpqJxTmGl6rYw= \
+	  -e MINIO_ROOT_USER="minioadmin" \
+	  -e MINIO_ROOT_PASSWORD="minioadmin" \
+	  $(MINIO_VERSION) server /data{1...4} \
+	  --address :9000 \
+	  --console-address :6000)
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 \
+	  --net=mynet123 -d \
+	  --name minio1 \
+	  --rm \
+	  -p 9001:9001 \
+	  -p 6001:6001 \
+	  -e MINIO_KMS_SECRET_KEY=my-minio-key:OSMM+vkKUTCvQs9YL/CVMIMt43HFhkUpqJxTmGl6rYw= \
+	  -e MINIO_ROOT_USER="minioadmin" \
+	  -e MINIO_ROOT_PASSWORD="minioadmin" \
+	  $(MINIO_VERSION) server /data{1...4} \
+	  --address :9001 \
+	  --console-address :6001)
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 \
+	  --net=mynet123 -d \
+	  --name minio2 \
+	  --rm \
+	  -p 9002:9002 \
+	  -p 6002:6002 \
+	  -e MINIO_KMS_SECRET_KEY=my-minio-key:OSMM+vkKUTCvQs9YL/CVMIMt43HFhkUpqJxTmGl6rYw= \
+	  -e MINIO_ROOT_USER="minioadmin" \
+	  -e MINIO_ROOT_PASSWORD="minioadmin" \
+	  $(MINIO_VERSION) server /data{1...4} \
+	  --address :9002 \
+	  --console-address :6002)
+	@(cd replication && go test -coverpkg=../api -c -tags testrunmain . && mkdir -p coverage && ./replication.test -test.v -test.run "^Test*" -test.coverprofile=coverage/replication.out)
+	@(docker stop minio || true)
+	@(docker stop minio1 || true)
+	@(docker stop minio2 || true)
+	@(docker network rm mynet123 || true)
+
+test-permissions-1:
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
+	@(env bash $(PWD)/web-app/tests/scripts/permissions.sh "web-app/tests/permissions-1/")
+	@(docker stop minio)
+
+test-permissions-2:
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
+	@(env bash $(PWD)/web-app/tests/scripts/permissions.sh "web-app/tests/permissions-2/")
+	@(docker stop minio)
+
+test-permissions-3:
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
+	@(env bash $(PWD)/web-app/tests/scripts/permissions.sh "web-app/tests/permissions-3/")
+	@(docker stop minio)
+
+test-permissions-4:
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
+	@(env bash $(PWD)/web-app/tests/scripts/permissions.sh "web-app/tests/permissions-4/")
+	@(docker stop minio)
+
+test-permissions-6:
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
+	@(env bash $(PWD)/web-app/tests/scripts/permissions.sh "web-app/tests/permissions-6/")
+	@(docker stop minio)
+
+test-apply-permissions:
+	@(env bash $(PWD)/web-app/tests/scripts/initialize-env.sh)
+
+test-start-docker-minio:
+	@(docker run -v /data1 -v /data2 -v /data3 -v /data4 -d --name minio --rm -p 9000:9000 quay.io/minio/minio:latest server /data{1...4})
+
+initialize-permissions: test-start-docker-minio test-apply-permissions
+	@echo "Done initializing permissions test"
+
+cleanup-permissions:
+	@(env bash $(PWD)/web-app/tests/scripts/cleanup-env.sh)
+	@(docker stop minio)
+
+initialize-docker-network:
+	@(docker network create test-network)
+
+test-start-docker-minio-w-redirect-url: initialize-docker-network
+	@(docker run \
+    -e MINIO_BROWSER_REDIRECT_URL='http://localhost:8000/console/subpath/' \
+    -e MINIO_SERVER_URL='http://localhost:9000' \
+    -v /data1 -v /data2 -v /data3 -v /data4 \
+    -d --network host --name minio --rm\
+    quay.io/minio/minio:latest server /data{1...4})
+
+test-start-docker-nginx-w-subpath:
+	@(docker run \
+	--network host \
+	-d --rm \
+	--add-host=host.docker.internal:host-gateway \
+	-v ./web-app/tests/subpath-nginx/nginx.conf:/etc/nginx/nginx.conf \
+	--name test-nginx nginx)
+
+test-initialize-minio-nginx: test-start-docker-minio-w-redirect-url test-start-docker-nginx-w-subpath
+
+cleanup-minio-nginx:
+	@(docker stop minio test-nginx & docker network rm test-network)
+
+# https://stackoverflow.com/questions/19200235/golang-tests-in-sub-directory
+# Note: go test ./... will run tests on the current folder and all subfolders.
+# This is needed because tests can be in the folder or sub-folder(s), let's include them all please!.
+test:
+	@echo "execute test and get coverage"
+	@(cd api && mkdir -p coverage && GO111MODULE=on go test ./... -test.v -coverprofile=coverage/coverage.out)
+
+
+# https://stackoverflow.com/questions/19200235/golang-tests-in-sub-directory
+# Note: go test ./... will run tests on the current folder and all subfolders.
+# This is since tests in pkg folder are in subfolders and were not executed.
+test-pkg:
+	@echo "execute test and get coverage"
+	@(cd pkg && mkdir -p coverage && GO111MODULE=on go test ./... -test.v -coverprofile=coverage/coverage-pkg.out)
+
+coverage:
+	@(GO111MODULE=on go test -v -coverprofile=coverage.out github.com/minio/console/api/... && go tool cover -html=coverage.out && open coverage.html)
+
+clean:
+	@echo "Cleaning up all the generated files"
+	@find . -name '*.test' | xargs rm -fv
+	@find . -name '*~' | xargs rm -fv
+	@rm -vf console
+
+docker:
+	@docker buildx build --output=type=docker --platform linux/amd64 -t $(TAG) --build-arg build_version=$(BUILD_VERSION) --build-arg build_time='$(BUILD_TIME)' --build-arg NODE_VERSION='$(NODE_VERSION)' .
+
+release: swagger-gen
+	@echo "Generating Release: $(RELEASE)"
+	@make assets
+	@git add -u .
+	@git add web-app/build/

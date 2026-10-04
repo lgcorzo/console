@@ -27,7 +27,7 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"github.com/minio/console/models"
+	"github.com/lgcorzo/console/models"
 )
 
 // LicenseAcknowledgeHandlerFunc turns a function with the right signature into a license acknowledge handler

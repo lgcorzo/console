@@ -20,8 +20,8 @@ import (
 	"context"
 	"time"
 
-	"github.com/minio/mc/cmd"
-	"github.com/minio/minio-go/v7"
+	"github.com/lgcorzo/mc/cmd"
+	"github.com/lgcorzo/minio-go/v7"
 )
 
 type objectsListOpts struct {

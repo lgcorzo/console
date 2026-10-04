@@ -21,10 +21,10 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/minio/minio-go/v7"
+	"github.com/lgcorzo/minio-go/v7"
 
-	"github.com/minio/console/models"
-	"github.com/minio/madmin-go/v3"
+	"github.com/lgcorzo/console/models"
+	"github.com/lgcorzo/madmin-go/v3"
 )
 
 var (

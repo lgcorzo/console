@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/minio/cli"
+	"github.com/lgcorzo/cli"
 	"github.com/stretchr/testify/assert"
 )
 

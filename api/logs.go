@@ -23,7 +23,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/minio/cli"
+	"github.com/lgcorzo/cli"
 )
 
 var (

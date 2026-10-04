@@ -27,7 +27,7 @@ import (
 
 	"github.com/go-openapi/runtime/middleware"
 
-	"github.com/minio/console/models"
+	"github.com/lgcorzo/console/models"
 )
 
 // MakeBucketHandlerFunc turns a function with the right signature into a make bucket handler

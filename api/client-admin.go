@@ -24,13 +24,13 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/minio/console/pkg"
+	"github.com/lgcorzo/console/pkg"
 
-	"github.com/minio/console/pkg/utils"
+	"github.com/lgcorzo/console/pkg/utils"
 
-	"github.com/minio/console/models"
-	"github.com/minio/madmin-go/v3"
-	"github.com/minio/minio-go/v7/pkg/credentials"
+	"github.com/lgcorzo/console/models"
+	"github.com/lgcorzo/madmin-go/v3"
+	"github.com/lgcorzo/minio-go/v7/pkg/credentials"
 )
 
 const globalAppName = "MinIO Console"

@@ -21,8 +21,8 @@ import (
 	"testing"
 	"time"
 
-	mc "github.com/minio/mc/cmd"
-	"github.com/minio/minio-go/v7"
+	mc "github.com/lgcorzo/mc/cmd"
+	"github.com/lgcorzo/minio-go/v7"
 	"github.com/stretchr/testify/assert"
 )
 

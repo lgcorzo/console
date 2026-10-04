@@ -25,10 +25,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/minio/console/pkg/auth/idp/oauth2"
-	xcerts "github.com/minio/pkg/v3/certs"
-	"github.com/minio/pkg/v3/env"
-	xnet "github.com/minio/pkg/v3/net"
+	"github.com/lgcorzo/console/pkg/auth/idp/oauth2"
+	xcerts "github.com/lgcorzo/pkg/v3/certs"
+	"github.com/lgcorzo/pkg/v3/env"
+	xnet "github.com/lgcorzo/pkg/v3/net"
 )
 
 var (

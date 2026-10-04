@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/minio/console/pkg/utils"
+	"github.com/lgcorzo/console/pkg/utils"
 )
 
 // KeyVal - appended to ReqInfo.Tags

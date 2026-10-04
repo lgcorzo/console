@@ -23,18 +23,18 @@ import (
 	"strconv"
 	"time"
 
-	policies "github.com/minio/console/api/policy"
-	"github.com/minio/madmin-go/v3"
+	policies "github.com/lgcorzo/console/api/policy"
+	"github.com/lgcorzo/madmin-go/v3"
 
 	jwtgo "github.com/golang-jwt/jwt/v4"
-	"github.com/minio/pkg/v3/policy/condition"
+	"github.com/lgcorzo/pkg/v3/policy/condition"
 
-	minioIAMPolicy "github.com/minio/pkg/v3/policy"
+	minioIAMPolicy "github.com/lgcorzo/pkg/v3/policy"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/minio/console/api/operations"
-	authApi "github.com/minio/console/api/operations/auth"
-	"github.com/minio/console/models"
+	"github.com/lgcorzo/console/api/operations"
+	authApi "github.com/lgcorzo/console/api/operations/auth"
+	"github.com/lgcorzo/console/models"
 )
 
 type Conditions struct {

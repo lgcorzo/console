@@ -26,18 +26,18 @@ import (
 	"strings"
 	"time"
 
-	"github.com/minio/minio-go/v7/pkg/sse"
-	xnet "github.com/minio/pkg/v3/net"
+	"github.com/lgcorzo/minio-go/v7/pkg/sse"
+	xnet "github.com/lgcorzo/pkg/v3/net"
 
-	"github.com/minio/console/models"
-	"github.com/minio/console/pkg"
-	xjwt "github.com/minio/console/pkg/auth/token"
-	mc "github.com/minio/mc/cmd"
-	"github.com/minio/mc/pkg/probe"
-	"github.com/minio/minio-go/v7"
-	"github.com/minio/minio-go/v7/pkg/credentials"
-	"github.com/minio/minio-go/v7/pkg/notification"
-	"github.com/minio/minio-go/v7/pkg/tags"
+	"github.com/lgcorzo/console/models"
+	"github.com/lgcorzo/console/pkg"
+	xjwt "github.com/lgcorzo/console/pkg/auth/token"
+	mc "github.com/lgcorzo/mc/cmd"
+	"github.com/lgcorzo/mc/pkg/probe"
+	"github.com/lgcorzo/minio-go/v7"
+	"github.com/lgcorzo/minio-go/v7/pkg/credentials"
+	"github.com/lgcorzo/minio-go/v7/pkg/notification"
+	"github.com/lgcorzo/minio-go/v7/pkg/tags"
 )
 
 func init() {

@@ -19,7 +19,7 @@ package api
 import (
 	"context"
 
-	"github.com/minio/madmin-go/v3"
+	"github.com/lgcorzo/madmin-go/v3"
 )
 
 type AdminClientMock struct {

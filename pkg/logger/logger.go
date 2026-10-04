@@ -31,15 +31,15 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/minio/pkg/v3/env"
+	"github.com/lgcorzo/pkg/v3/env"
 
-	"github.com/minio/console/pkg"
-	"github.com/minio/pkg/v3/certs"
+	"github.com/lgcorzo/console/pkg"
+	"github.com/lgcorzo/pkg/v3/certs"
 
-	"github.com/minio/console/pkg/logger/config"
-	"github.com/minio/console/pkg/logger/message/log"
-	"github.com/minio/highwayhash"
-	"github.com/minio/minio-go/v7/pkg/set"
+	"github.com/lgcorzo/console/pkg/logger/config"
+	"github.com/lgcorzo/console/pkg/logger/message/log"
+	"github.com/lgcorzo/highwayhash"
+	"github.com/lgcorzo/minio-go/v7/pkg/set"
 )
 
 // HighwayHash key for logging in anonymous mode

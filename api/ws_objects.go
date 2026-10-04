@@ -24,8 +24,8 @@ import (
 	"sync"
 	"time"
 
-	"github.com/minio/console/models"
-	"github.com/minio/websocket"
+	"github.com/lgcorzo/console/models"
+	"github.com/lgcorzo/websocket"
 )
 
 func (wsc *wsMinioClient) objectManager(session *models.Principal) {

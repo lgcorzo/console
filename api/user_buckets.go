@@ -25,20 +25,20 @@ import (
 	"strings"
 	"time"
 
-	"github.com/minio/minio-go/v7"
+	"github.com/lgcorzo/minio-go/v7"
 
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/go-openapi/swag"
-	"github.com/minio/console/api/operations"
-	bucketApi "github.com/minio/console/api/operations/bucket"
-	"github.com/minio/console/models"
-	"github.com/minio/console/pkg/auth/token"
-	"github.com/minio/madmin-go/v3"
-	"github.com/minio/mc/cmd"
-	"github.com/minio/mc/pkg/probe"
-	"github.com/minio/minio-go/v7/pkg/credentials"
-	"github.com/minio/minio-go/v7/pkg/policy"
-	minioIAMPolicy "github.com/minio/pkg/v3/policy"
+	"github.com/lgcorzo/console/api/operations"
+	bucketApi "github.com/lgcorzo/console/api/operations/bucket"
+	"github.com/lgcorzo/console/models"
+	"github.com/lgcorzo/console/pkg/auth/token"
+	"github.com/lgcorzo/madmin-go/v3"
+	"github.com/lgcorzo/mc/cmd"
+	"github.com/lgcorzo/mc/pkg/probe"
+	"github.com/lgcorzo/minio-go/v7/pkg/credentials"
+	"github.com/lgcorzo/minio-go/v7/pkg/policy"
+	minioIAMPolicy "github.com/lgcorzo/pkg/v3/policy"
 )
 
 func registerBucketsHandlers(api *operations.ConsoleAPI) {

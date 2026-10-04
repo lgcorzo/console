@@ -39,22 +39,22 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/minio/console/pkg/logger"
-	"github.com/minio/console/pkg/utils"
-	"github.com/minio/minio-go/v7/pkg/credentials"
+	"github.com/lgcorzo/console/pkg/logger"
+	"github.com/lgcorzo/console/pkg/utils"
+	"github.com/lgcorzo/minio-go/v7/pkg/credentials"
 
 	"github.com/klauspost/compress/gzhttp"
 
-	portal_ui "github.com/minio/console/web-app"
-	"github.com/minio/pkg/v3/env"
-	"github.com/minio/pkg/v3/mimedb"
-	xnet "github.com/minio/pkg/v3/net"
+	portal_ui "github.com/lgcorzo/console/web-app"
+	"github.com/lgcorzo/pkg/v3/env"
+	"github.com/lgcorzo/pkg/v3/mimedb"
+	xnet "github.com/lgcorzo/pkg/v3/net"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
-	"github.com/minio/console/api/operations"
-	"github.com/minio/console/models"
-	"github.com/minio/console/pkg/auth"
+	"github.com/lgcorzo/console/api/operations"
+	"github.com/lgcorzo/console/models"
+	"github.com/lgcorzo/console/pkg/auth"
 	"github.com/unrolled/secure"
 )
 

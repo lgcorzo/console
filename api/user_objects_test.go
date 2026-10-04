@@ -30,14 +30,14 @@ import (
 	"time"
 
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/minio/console/api/operations/object"
+	"github.com/lgcorzo/console/api/operations/object"
 
 	"github.com/go-openapi/swag"
-	"github.com/minio/console/models"
-	mc "github.com/minio/mc/cmd"
-	"github.com/minio/mc/pkg/probe"
-	"github.com/minio/minio-go/v7"
-	"github.com/minio/minio-go/v7/pkg/tags"
+	"github.com/lgcorzo/console/models"
+	mc "github.com/lgcorzo/mc/cmd"
+	"github.com/lgcorzo/mc/pkg/probe"
+	"github.com/lgcorzo/minio-go/v7"
+	"github.com/lgcorzo/minio-go/v7/pkg/tags"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -22,11 +22,11 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/minio/madmin-go/v3"
+	"github.com/lgcorzo/madmin-go/v3"
 
-	iampolicy "github.com/minio/pkg/v3/policy"
+	iampolicy "github.com/lgcorzo/pkg/v3/policy"
 
-	"github.com/minio/minio-go/v7/pkg/credentials"
+	"github.com/lgcorzo/minio-go/v7/pkg/credentials"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -24,10 +24,10 @@ import (
 
 	"github.com/go-openapi/loads"
 	"github.com/jessevdk/go-flags"
-	"github.com/minio/cli"
-	"github.com/minio/console/api"
-	"github.com/minio/console/api/operations"
-	"github.com/minio/console/pkg/certs"
+	"github.com/lgcorzo/cli"
+	"github.com/lgcorzo/console/api"
+	"github.com/lgcorzo/console/api/operations"
+	"github.com/lgcorzo/console/pkg/certs"
 )
 
 // starts the server

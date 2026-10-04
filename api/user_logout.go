@@ -29,10 +29,10 @@ import (
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
-	"github.com/minio/console/api/operations"
-	authApi "github.com/minio/console/api/operations/auth"
-	"github.com/minio/console/models"
-	"github.com/minio/console/pkg/auth/idp/oauth2"
+	"github.com/lgcorzo/console/api/operations"
+	authApi "github.com/lgcorzo/console/api/operations/auth"
+	"github.com/lgcorzo/console/models"
+	"github.com/lgcorzo/console/pkg/auth/idp/oauth2"
 )
 
 func registerLogoutHandlers(api *operations.ConsoleAPI) {

@@ -30,20 +30,20 @@ import (
 	"strings"
 	"time"
 
-	"github.com/minio/minio-go/v7"
+	"github.com/lgcorzo/minio-go/v7"
 
-	"github.com/minio/console/pkg/utils"
+	"github.com/lgcorzo/console/pkg/utils"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/klauspost/compress/zip"
-	"github.com/minio/console/api/operations"
-	objectApi "github.com/minio/console/api/operations/object"
-	"github.com/minio/console/models"
-	mc "github.com/minio/mc/cmd"
-	"github.com/minio/mc/pkg/probe"
-	"github.com/minio/minio-go/v7/pkg/tags"
-	"github.com/minio/pkg/v3/mimedb"
+	"github.com/lgcorzo/console/api/operations"
+	objectApi "github.com/lgcorzo/console/api/operations/object"
+	"github.com/lgcorzo/console/models"
+	mc "github.com/lgcorzo/mc/cmd"
+	"github.com/lgcorzo/mc/pkg/probe"
+	"github.com/lgcorzo/minio-go/v7/pkg/tags"
+	"github.com/lgcorzo/pkg/v3/mimedb"
 )
 
 // enum types

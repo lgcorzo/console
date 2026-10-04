@@ -25,18 +25,18 @@ import (
 	"testing"
 	"time"
 
-	"github.com/minio/minio-go/v7/pkg/notification"
+	"github.com/lgcorzo/minio-go/v7/pkg/notification"
 
-	"github.com/minio/console/pkg/auth/token"
-	"github.com/minio/console/pkg/utils"
+	"github.com/lgcorzo/console/pkg/auth/token"
+	"github.com/lgcorzo/console/pkg/utils"
 
 	"github.com/go-openapi/swag"
-	"github.com/minio/console/models"
-	"github.com/minio/madmin-go/v3"
-	"github.com/minio/mc/pkg/probe"
-	"github.com/minio/minio-go/v7"
-	"github.com/minio/minio-go/v7/pkg/sse"
-	"github.com/minio/minio-go/v7/pkg/tags"
+	"github.com/lgcorzo/console/models"
+	"github.com/lgcorzo/madmin-go/v3"
+	"github.com/lgcorzo/mc/pkg/probe"
+	"github.com/lgcorzo/minio-go/v7"
+	"github.com/lgcorzo/minio-go/v7/pkg/sse"
+	"github.com/lgcorzo/minio-go/v7/pkg/tags"
 	"github.com/stretchr/testify/assert"
 )
 

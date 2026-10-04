@@ -23,9 +23,9 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/minio/console/pkg/logger/config"
-	"github.com/minio/console/pkg/logger/target/http"
-	"github.com/minio/pkg/v3/env"
+	"github.com/lgcorzo/console/pkg/logger/config"
+	"github.com/lgcorzo/console/pkg/logger/target/http"
+	"github.com/lgcorzo/pkg/v3/env"
 )
 
 // NewConfig - initialize new logger config.

@@ -22,9 +22,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/minio/console/pkg/utils"
+	"github.com/lgcorzo/console/pkg/utils"
 
-	"github.com/minio/console/models"
+	"github.com/lgcorzo/console/models"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -32,9 +32,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/minio/console/models"
-	"github.com/minio/console/pkg/auth/token"
-	"github.com/minio/minio-go/v7/pkg/credentials"
+	"github.com/lgcorzo/console/models"
+	"github.com/lgcorzo/console/pkg/auth/token"
+	"github.com/lgcorzo/minio-go/v7/pkg/credentials"
 	"github.com/secure-io/sio-go/sioutil"
 	"golang.org/x/crypto/chacha20"
 	"golang.org/x/crypto/chacha20poly1305"

@@ -84,6 +84,22 @@ jobs:
           path: |
             ./web-app/build/
           key: ${{ runner.os }}-assets-${{ github.run_id }}
+      - name: Setup git wrapper for Yarn
+        run: |
+          sudo tee /usr/local/bin/git << 'EOF'
+          #!/bin/bash
+          args=()
+          for arg in "$@"; do
+              if [[ "$arg" == "-c "* ]]; then
+                  args+=("-c" "${arg#-c }")
+              else
+                  args+=("$arg")
+              fi
+          done
+          exec /usr/bin/git "${args[@]}"
+          EOF
+          sudo chmod +x /usr/local/bin/git
+
       - name: Install Dependencies
         working-directory: ./web-app
         continue-on-error: false
@@ -832,6 +848,22 @@ jobs:
           path: |
             ./web-app/build/
           key: ${{ runner.os }}-assets-istanbul-coverage-${{ github.run_id }}
+      - name: Setup git wrapper for Yarn
+        run: |
+          sudo tee /usr/local/bin/git << 'EOF'
+          #!/bin/bash
+          args=()
+          for arg in "$@"; do
+              if [[ "$arg" == "-c "* ]]; then
+                  args+=("-c" "${arg#-c }")
+              else
+                  args+=("$arg")
+              fi
+          done
+          exec /usr/bin/git "${args[@]}"
+          EOF
+          sudo chmod +x /usr/local/bin/git
+
       - name: Install Dependencies
         working-directory: ./web-app
         continue-on-error: false

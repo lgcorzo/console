@@ -46,6 +46,22 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NVMRC }}
+      - name: Setup git wrapper for Yarn
+        run: |
+          sudo tee /usr/local/bin/git << 'EOF'
+          #!/bin/bash
+          args=()
+          for arg in "$@"; do
+              if [[ "$arg" == "-c "* ]]; then
+                  args+=("-c" "${arg#-c }")
+              else
+                  args+=("$arg")
+              fi
+          done
+          exec /usr/bin/git "${args[@]}"
+          EOF
+          sudo chmod +x /usr/local/bin/git
+
       - name: Checks for known security issues with the installed packages
         working-directory: ./web-app
         continue-on-error: false

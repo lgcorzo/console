@@ -1,20 +1,73 @@
 # MinIO Console
 
-![build](https://github.com/minio/object-browser/actions/workflows/jobs.yaml/badge.svg) ![license](https://img.shields.io/badge/license-AGPL%20V3-blue)
+![build](https://github.com/lgcorzo/console/actions/workflows/jobs.yaml/badge.svg) ![license](https://img.shields.io/badge/license-AGPL%20V3-blue)
 
-A graphical user interface for [MinIO](https://github.com/minio/minio)
+A graphical user interface for [MinIO](https://github.com/lgcorzo/minio) maintained under the **Sovereign MinIO Ecosystem** by [@lgcorzo](https://github.com/lgcorzo).
 
 | Object Browser                       | Creating a bucket                     | Object Details                  |
 |--------------------------------------|-------------------------------|---------------------------------|
 | ![Object Browser](images/pic1-a.png) | ![Dashboard](images/pic2-a.png) | ![Dashboard](images/pic3-a.png) |
 | ![Object Browser](images/pic1-b.png) | ![Dashboard](images/pic2-b.png) | ![Dashboard](images/pic3-b.png) |
 
+---
+
+## Sovereign Maintenance & Dark Gravity Factory Integration
+
+This repository (`lgcorzo/console`) is actively maintained as a core component of the **Sovereign MinIO Ecosystem** and the **Dark Gravity Autonomous AI Factory**.
+
+### Strategic Rationale
+
+1. **Full Supply-Chain Autonomy**: Zero reliance on upstream breaking license changes or unannounced deprecations. Maintain complete ownership of operational UI tools and management capabilities.
+2. **Dark Gravity Factory Core Integration**: Essential component powering graphical bucket policy management, IAM administration, and observability dashboards for high-throughput AI storage and automated agent pipelines.
+3. **Compliance & Security**: Sovereign maintenance guaranteeing compliance with EU AI Act, SOC 2 Type II, ISO 25059, and strict zero-CVE SLAs.
+4. **Ecosystem Interoperability**: Direct seamless integration with all 38 repositories in `@lgcorzo` (MinIO Server, MC, KES, Operator, DirectPV, Console, SIMD acceleration libraries, etc.).
+
+---
+
+## 38-Repo Sovereign Ecosystem
+
+| Category | Repositories |
+|---|---|
+| **Core Storage & Server** | `lgcorzo/minio`, `lgcorzo/console`, `lgcorzo/mc`, `lgcorzo/operator`, `lgcorzo/directpv`, `lgcorzo/kes` |
+| **SDKs & Clients** | `lgcorzo/minio-go`, `lgcorzo/minio-java`, `lgcorzo/minio-js`, `lgcorzo/minio-py`, `lgcorzo/minio-dotnet`, `lgcorzo/minio-cpp`, `lgcorzo/madmin-go` |
+| **High-Performance SIMD Libraries** | `lgcorzo/sha256-simd`, `lgcorzo/md5-simd`, `lgcorzo/blake2b-simd`, `lgcorzo/highwayhash`, `lgcorzo/simdjson-go` |
+| **Compression & Erasure Coding** | `lgcorzo/compress`, `lgcorzo/s2`, `lgcorzo/reed-solomon-simd`, `lgcorzo/klauspost-compress` |
+| **Security & Encryption** | `lgcorzo/sio-go`, `lgcorzo/kms-go`, `lgcorzo/pkg` |
+| **Infrastructure & Utilities** | `lgcorzo/cli`, `lgcorzo/elfloader`, `lgcorzo/filepath`, `lgcorzo/colorjson`, `lgcorzo/crc64nvme`, `lgcorzo/selfupdate`, `lgcorzo/websocket`, `lgcorzo/sidekick`, `lgcorzo/dsm-operator`, `lgcorzo/mcp-server` |
+
+---
+
+## Automated CI/CD Maintenance Architecture
+
+```
++-----------------------------------------------------------------------------------+
+|                            Automated Maintenance Pipeline                         |
++-----------------------------------------------------------------------------------+
+|  [ Upstream Sync / CVE Watcher ]                                                  |
+|                 |                                                                 |
+|                 v                                                                 |
+|  [ Automated Code Refactoring & Import Migration ] (github.com/minio -> lgcorzo)  |
+|                 |                                                                 |
+|                 v                                                                 |
+|  [ Multi-Platform CI Matrix ] (Linux, macOS, Windows / Go 1.24+)                  |
+|                 |                                                                 |
+|                 +---> [ Security & Vuln Scan ] (govulncheck & CodeQL)             |
+|                 +---> [ Unit, Race & Integration Tests ]                            |
+|                 |                                                                 |
+|                 v                                                                 |
+|  [ Tagged Sovereign Release Build & Multi-Arch Container Image Deploy ]           |
++-----------------------------------------------------------------------------------+
+```
+
+---
+
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
 - [MinIO Console](#minio-console)
-  - [Install](#install)
-    - [Build from source](#build-from-source)
+  - [Sovereign Maintenance & Dark Gravity Factory Integration](#sovereign-maintenance--dark-gravity-factory-integration)
+  - [38-Repo Sovereign Ecosystem](#38-repo-sovereign-ecosystem)
+  - [Automated CI/CD Maintenance Architecture](#automated-cicd-maintenance-architecture)
   - [Setup](#setup)
     - [1. Create a user `console` using `mc`](#1-create-a-user-console-using-mc)
     - [2. Create a policy for `console` with admin access to all resources (for testing)](#2-create-a-policy-for-console-with-admin-access-to-all-resources-for-testing)
@@ -213,7 +266,7 @@ the `CONSOLE_DEBUG_LOGLEVEL` environment variable to one of the following values
  - Duration of the request
 
 The detailed logging also includes all request and response headers (if any).
- 
+
 # Contribute to console Project
 
-Please follow console [Contributor's Guide](https://github.com/minio/console/blob/master/CONTRIBUTING.md)
+Please follow console [Contributor's Guide](https://github.com/lgcorzo/console/blob/master/CONTRIBUTING.md)

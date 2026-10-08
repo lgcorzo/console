@@ -218,7 +218,7 @@ test-pkg:
 	@(cd pkg && mkdir -p coverage && GO111MODULE=on go test ./... -test.v -coverprofile=coverage/coverage-pkg.out)
 
 coverage:
-	@(GO111MODULE=on go test -v -coverprofile=coverage.out github.com/minio/console/api/... && go tool cover -html=coverage.out && open coverage.html)
+	@(GO111MODULE=on go test -v -coverprofile=coverage.out github.com/lgcorzo/console/api/... && go tool cover -html=coverage.out && open coverage.html)
 
 clean:
 	@echo "Cleaning up all the generated files"

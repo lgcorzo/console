@@ -115,17 +115,17 @@ jobs:
         go-version: [ 1.24.x ]
     steps:
       # To build minio image, we need to clone the repository first
-      - name: Clone github.com/minio/minio
+      - name: Clone github.com/lgcorzo/minio
         uses: actions/checkout@v3
         with:
-          repository: minio/minio
+          repository: lgcorzo/minio
       - name: Check-out matching MinIO branch
         env:
           GH_BRANCH: ${{ github.head_ref || github.ref_name }}
           GH_PR_REPO: ${{ github.event.pull_request.head.repo.full_name }}
         run: |
           GH_PR_ACCOUNT=`echo $GH_PR_REPO | sed "s/\\/.*//"`
-          if [ ! -z "$GH_PR_ACCOUNT" ] && [ ! "$GH_PR_ACCOUNT" = "minio" ]; then
+          if [ ! -z "$GH_PR_ACCOUNT" ] && [ ! "$GH_PR_ACCOUNT" = "lgcorzo" ]; then
             ALTREPO="https://github.com/$GH_PR_ACCOUNT/minio.git"
             echo "Attempting to fetch $ALTREPO..."
             git remote add alt $ALTREPO
@@ -626,10 +626,10 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
-      - name: Clone github.com/minio/minio
+      - name: Clone github.com/lgcorzo/minio
         uses: actions/checkout@master
         with:
-          repository: minio/minio
+          repository: lgcorzo/minio
           path: "minio_repository"
       - name: Check-out matching MinIO branch
         env:
@@ -637,7 +637,7 @@ jobs:
           GH_PR_REPO: ${{ github.event.pull_request.head.repo.full_name }}
         run: |
           GH_PR_ACCOUNT=`echo $GH_PR_REPO | sed "s/\\/.*//"`
-          if [ ! -z "$GH_PR_ACCOUNT" ] && [ ! "$GH_PR_ACCOUNT" = "minio" ]; then
+          if [ ! -z "$GH_PR_ACCOUNT" ] && [ ! "$GH_PR_ACCOUNT" = "lgcorzo" ]; then
             ALTREPO="https://github.com/$GH_PR_ACCOUNT/minio.git"
             echo "Attempting to fetch $ALTREPO..."
             git remote add alt $ALTREPO
@@ -666,11 +666,11 @@ jobs:
           echo "Create MinIO image";
           make docker VERSION=$VERSION;
 
-          docker build -q --no-cache -t minio/minio:$VERSION . -f Dockerfile
+          docker build -q --no-cache -t lgcorzo/minio:$VERSION . -f Dockerfile
           echo "Jumping back to console repository to run the integration test"
           cd $GITHUB_WORKSPACE;
           echo "We are going to use the built image on test-integration";
-          MINIO_VERSION="minio/minio:$VERSION";
+          MINIO_VERSION="lgcorzo/minio:$VERSION";
           echo $MINIO_VERSION;
 
           echo "Create bucket for replication with versioning"

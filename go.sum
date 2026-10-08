@@ -158,6 +158,7 @@ github.com/lgcorzo/filepath v1.0.0/go.mod h1:ITCMgF8fzk9mRfFKWu1YG/FhV0OXvmVJj5L
 github.com/lgcorzo/highwayhash v1.0.4 h1:C7b67eab1pdEZASSWKe9RZxN9PjcBmdGfd6pURI4zpE=
 github.com/lgcorzo/highwayhash v1.0.4/go.mod h1:FGojlFVouyr2TWsblkY13zxrXIDTCuxU0prG9erdw/A=
 github.com/lgcorzo/madmin-go/v3 v3.0.109 h1:LxxMaxfteGTjF9sT/CAVKjyVOcvv05eb7r30WIE7/t0=
+github.com/lgcorzo/madmin-go/v3 v3.0.109 h1:fTtZAyr7GetraBUgMz0SlMcuU+pauhmxISSIYI9+Cmo=
 github.com/lgcorzo/madmin-go/v3 v3.0.109/go.mod h1:5Lg9GHFcFuvi9W6v73ELVqn1NglRYZ5JGV0zo18DPLY=
 github.com/lgcorzo/mc v0.1.0 h1:pJg3UYlHdGCsh7yyJN6jZXvwvdxmcn1dze3Gk+Dt6/Y=
 github.com/lgcorzo/mc v0.1.0/go.mod h1:SCqikrtB5qpAWh+ZFbyfgX5G6e+9xTGV5cCYUS/Nn/Y=

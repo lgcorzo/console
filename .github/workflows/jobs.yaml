@@ -34,12 +34,10 @@ jobs:
           go-version: ${{ matrix.go-version }}
         id: go
 
-      - name: Build on ${{ matrix.os }}
-        env:
-          GO111MODULE: on
-          GOOS: linux
-        run: |
-          make verifiers
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.64.6
 
   semgrep-static-code-analysis:
     name: "semgrep checks"

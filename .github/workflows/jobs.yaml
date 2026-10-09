@@ -108,7 +108,7 @@ jobs:
         working-directory: ./web-app
         continue-on-error: false
         run: |
-          yarn install --immutable
+          yarn install --no-immutable
       - name: Check for Warnings in build output
         working-directory: ./web-app
         continue-on-error: false
@@ -872,7 +872,7 @@ jobs:
         working-directory: ./web-app
         continue-on-error: false
         run: |
-          yarn install --immutable
+          yarn install --no-immutable
       - name: Check for Warnings in build output
         working-directory: ./web-app
         continue-on-error: false

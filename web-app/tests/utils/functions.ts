@@ -110,7 +110,7 @@ export const cleanUpBucket = (t, modifier) => {
 };
 
 export const namedTestBucketBrowseButtonFor = (name) => {
-  return Selector("button").withAttribute("id", `manageBucket-${name}`);
+  return Selector(`#manageBucket-${name}`);
 };
 
 export const testBucketBrowseButtonFor = (modifier) => {

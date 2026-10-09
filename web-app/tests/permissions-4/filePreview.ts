@@ -44,6 +44,7 @@ test
       .useRole(roles.admin)
       .click(acknowledgeButton)
       .typeText(elements.filterBuckets, bucketName)
+      .wait(1500)
       .click(bucketNameAction)
       .click(file)
       .click(Selector(".objectActions button").withText("Preview"))

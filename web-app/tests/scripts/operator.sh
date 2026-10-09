@@ -24,7 +24,11 @@ export CI
 sudo curl -#L "https://dl.k8s.io/release/v1.23.1/bin/linux/amd64/kubectl" -o /usr/local/bin/kubectl
 sudo chmod +x /usr/local/bin/kubectl
 
-sudo curl -#L "https://dl.min.io/client/mc/release/linux-amd64/mc" -o /usr/local/bin/mc
+if command -v docker >/dev/null 2>&1; then
+  docker run --rm --entrypoint cat quay.io/minio/aistor/mc:latest /usr/bin/mc | sudo tee /usr/local/bin/mc >/dev/null
+else
+  sudo curl -#fL "https://dl.min.io/client/mc/release/linux-amd64/mc" -o /usr/local/bin/mc || true
+fi
 sudo chmod +x /usr/local/bin/mc
 
 __init__() {

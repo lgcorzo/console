@@ -62,7 +62,11 @@ __init__() {
   *) ;;
   esac
 
-  curl -sLO "https://dl.min.io/client/mc/release/$OS-$ARCH/mc" -o mc
+  if command -v docker >/dev/null 2>&1; then
+    docker run --rm --entrypoint cat quay.io/minio/aistor/mc:latest /usr/bin/mc > mc
+  else
+    curl -sSfL "https://dl.min.io/client/mc/release/$OS-$ARCH/mc" -o mc || true
+  fi
   chmod +x mc
   sudo mv mc /usr/local/bin || mv mc /usr/local/bin
   sudo chmod +x /usr/local/bin/mc || chmod +x /usr/local/bin/mc || true

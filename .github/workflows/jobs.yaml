@@ -693,7 +693,7 @@ jobs:
 
           echo "Create bucket for replication with versioning"
           echo "Download mc for Ubuntu"
-          wget -q https://dl.min.io/client/mc/release/linux-amd64/mc
+          docker run --rm --entrypoint cat quay.io/minio/aistor/mc:latest /usr/bin/mc > mc
           echo "Change the permissions to execute mc command"
           chmod +x mc
 
@@ -770,7 +770,7 @@ jobs:
           echo "put together the outs for final coverage resolution"
           ./gocovmerge ../integration/coverage/system.out ../api/coverage/coverage.out ../pkg/coverage/coverage-pkg.out > all.out
           echo "Download mc for Ubuntu"
-          wget -q https://dl.min.io/client/mc/release/linux-amd64/mc
+          docker run --rm --entrypoint cat quay.io/minio/aistor/mc:latest /usr/bin/mc > mc
           echo "Change the permissions to execute mc command"
           chmod +x mc
           echo "Only run our test if play is up and running"

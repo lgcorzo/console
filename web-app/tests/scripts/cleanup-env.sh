@@ -69,8 +69,14 @@ __init__() {
   export GOPATH=/tmp/gopath
   export PATH=${PATH}:${GOPATH}/bin
 
-  wget https://dl.min.io/client/mc/release/linux-amd64/mc
-  chmod +x mc
+  if ! command -v mc >/dev/null 2>&1; then
+    if command -v docker >/dev/null 2>&1; then
+      docker run --rm --entrypoint cat quay.io/minio/aistor/mc:latest /usr/bin/mc > mc
+      chmod +x mc
+      sudo mv mc /usr/local/bin || mv mc /usr/local/bin
+      sudo chmod +x /usr/local/bin/mc || chmod +x /usr/local/bin/mc || true
+    fi
+  fi
 
   add_alias
 }

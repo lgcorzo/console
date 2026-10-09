@@ -100,7 +100,7 @@ __init__() {
 main() {
   (yarn start &>/dev/null) &
   (./console server &>/dev/null) &
-  (testcafe "chrome:headless --no-sandbox" "$1" -q --skip-js-errors -c 3)
+  (testcafe "chrome:headless --no-sandbox --disable-dev-shm-usage --disable-gpu" "$1" -q --skip-js-errors --disable-native-automation -c 1)
   cleanup
 }
 

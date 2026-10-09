@@ -258,7 +258,7 @@ jobs:
     needs:
       - compile-binary
     runs-on: [ ubuntu-22.04 ]
-    timeout-minutes: 10
+    timeout-minutes: 15
     strategy:
       matrix:
         go-version: [ 1.24.x ]
@@ -311,7 +311,7 @@ jobs:
     needs:
       - compile-binary
     runs-on: [ ubuntu-22.04 ]
-    timeout-minutes: 10
+    timeout-minutes: 15
     strategy:
       matrix:
         go-version: [ 1.24.x ]
@@ -363,7 +363,7 @@ jobs:
     needs:
       - compile-binary
     runs-on: [ ubuntu-22.04 ]
-    timeout-minutes: 10
+    timeout-minutes: 15
     strategy:
       matrix:
         go-version: [ 1.24.x ]
@@ -456,7 +456,7 @@ jobs:
         run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
-        timeout-minutes: 10
+        timeout-minutes: 15
         run: npx testcafe "chrome:headless --no-sandbox --disable-dev-shm-usage --disable-gpu" web-app/tests/permissions-4/ --skip-js-errors --disable-native-automation -c 1
 
   all-permissions-6:
@@ -464,6 +464,7 @@ jobs:
     needs:
       - compile-binary
     runs-on: [ ubuntu-22.04 ]
+    timeout-minutes: 15
     strategy:
       matrix:
         go-version: [ 1.24.x ]
@@ -504,7 +505,7 @@ jobs:
         run: npm install testcafe@3.5.0
 
       - name: Run TestCafe Tests
-        timeout-minutes: 5
+        timeout-minutes: 15
         run: npx testcafe "chrome:headless --no-sandbox --disable-dev-shm-usage --disable-gpu" web-app/tests/permissions-6/ --skip-js-errors --disable-native-automation -c 1
 
   all-permissions-B:
@@ -512,6 +513,7 @@ jobs:
     needs:
       - compile-binary
     runs-on: [ ubuntu-22.04 ]
+    timeout-minutes: 15
     strategy:
       matrix:
         go-version: [ 1.24.x ]

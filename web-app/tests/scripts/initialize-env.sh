@@ -64,7 +64,8 @@ __init__() {
 
   curl -sLO "https://dl.min.io/client/mc/release/$OS-$ARCH/mc" -o mc
   chmod +x mc
-  mv mc /usr/local/bin
+  sudo mv mc /usr/local/bin || mv mc /usr/local/bin
+  sudo chmod +x /usr/local/bin/mc || chmod +x /usr/local/bin/mc || true
 
   add_alias
 }

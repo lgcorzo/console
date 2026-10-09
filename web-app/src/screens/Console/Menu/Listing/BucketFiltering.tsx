@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { RefObject, useRef } from "react";
+import React, { useRef } from "react";
 import { Box, InputBox, MenuItem, SearchIcon } from "mds";
 import get from "lodash/get";
 import { useTheme } from "styled-components";

@@ -87,7 +87,7 @@ __init__() {
   export GOPATH=/tmp/gopath
   export PATH=${PATH}:${GOPATH}/bin
 
-  go install github.com/minio/mc@latest
+  go install github.com/lgcorzo/mc@latest
 
   add_alias
 
@@ -100,7 +100,7 @@ __init__() {
 main() {
   (yarn start &>/dev/null) &
   (./console server &>/dev/null) &
-  (testcafe "firefox:headless" "$1" -q --skip-js-errors -c 3)
+  (testcafe "chrome:headless --no-sandbox --disable-dev-shm-usage --disable-gpu" "$1" -q --skip-js-errors --disable-native-automation -c 1)
   cleanup
 }
 

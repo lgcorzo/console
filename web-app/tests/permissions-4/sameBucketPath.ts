@@ -46,6 +46,7 @@ test
         .useRole(roles.admin)
         .click(acknowledgeButton)
         .typeText(elements.filterBuckets, bucketName)
+        .wait(1500)
         .click(testBucketBrowseButton)
         .wait(1500)
         .click(Selector("label").withText("Show deleted objects"))

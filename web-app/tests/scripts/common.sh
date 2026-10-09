@@ -87,7 +87,12 @@ create_users() {
 create_buckets() {
   mc mb minio/testcafe && mc cp ./web-app/tests/uploads/test.txt minio/testcafe/write/test.txt
   mc mb minio/test && mc cp ./web-app/tests/uploads/test.txt minio/test/test.txt && mc cp ./web-app/tests/uploads/test.txt minio/test/digitalinsights/xref_cust_guid_actd-v1.txt && mc cp ./web-app/tests/uploads/test.txt minio/test/digitalinsights/test.txt
-  mc mb minio/testcondition && mc cp ./web-app/tests/uploads/test.txt minio/testcondition/test.txt && mc cp ./web-app/tests2/uploads/test.txt minio/testcondition/firstlevel/xref_cust_guid_actd-v1.txt && mc cp ./web-app/tests/uploads/test.txt minio/testcondition/firstlevel/test.txt && mc cp ./web-app/tests/uploads/test.txt minio/testcondition/firstlevel/secondlevel/test.txt && mc cp ./web-app/tests/uploads/test.txt minio/testcondition/firstlevel/secondlevel/thirdlevel/test.txt
+  mc mb minio/testcondition && mc cp ./web-app/tests/uploads/test.txt minio/testcondition/test.txt && mc cp ./web-app/tests/uploads/test.txt minio/testcondition/firstlevel/xref_cust_guid_actd-v1.txt && mc cp ./web-app/tests/uploads/test.txt minio/testcondition/firstlevel/test.txt && mc cp ./web-app/tests/uploads/test.txt minio/testcondition/firstlevel/secondlevel/test.txt && mc cp ./web-app/tests/uploads/test.txt minio/testcondition/firstlevel/secondlevel/thirdlevel/test.txt
+  mc mb minio/preview || true
+  mc cp ./web-app/tests/uploads/internode.png minio/preview/internode.png || true
+  mc mb minio/bucket-with-dash || true
+  mc version enable minio/bucket-with-dash || true
+  mc cp ./web-app/tests/uploads/test.txt minio/bucket-with-dash/firstlevel/secondlevel/bucket-with-dash/otherlevel/test.txt || true
 }
 
 assign_policies() {

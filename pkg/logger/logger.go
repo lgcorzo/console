@@ -138,7 +138,7 @@ func uniqueEntries(paths []string) []string {
 }
 
 // Init sets the trimStrings to possible GOPATHs
-// and GOROOT directories. Also append github.com/minio/minio
+// and GOROOT directories. Also append github.com/lgcorzo/minio
 // This is done to clean up the filename, when stack trace is
 // displayed when an errors happens.
 func Init(goPath, goRoot string) {
@@ -182,10 +182,10 @@ func Init(goPath, goRoot string) {
 	// Remove duplicate entries.
 	trimStrings = uniqueEntries(trimStrings)
 
-	// Add "github.com/minio/minio" as the last to cover
-	// paths like "{GOROOT}/src/github.com/minio/minio"
-	// and "{GOPATH}/src/github.com/minio/minio"
-	trimStrings = append(trimStrings, filepath.Join("github.com", "minio", "minio")+string(filepath.Separator))
+	// Add "github.com/lgcorzo/minio" as the last to cover
+	// paths like "{GOROOT}/src/github.com/lgcorzo/minio"
+	// and "{GOPATH}/src/github.com/lgcorzo/minio"
+	trimStrings = append(trimStrings, filepath.Join("github.com", "lgcorzo", "minio")+string(filepath.Separator))
 }
 
 func trimTrace(f string) string {

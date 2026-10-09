@@ -162,7 +162,7 @@ const Login = () => {
             </a>
             <span className={"separator"}>|</span>
             <a
-              href="https://github.com/minio/minio"
+              href="https://github.com/lgcorzo/minio"
               target="_blank"
               rel="noopener"
             >

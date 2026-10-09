@@ -1,6 +1,6 @@
 # Developing MinIO Console
 
-The MinIO Console requires the [MinIO Server](https://github.com/minio/minio). For development purposes, you also need
+The MinIO Console requires the [MinIO Server](https://github.com/lgcorzo/minio). For development purposes, you also need
 to run both the MinIO Console web app and the MinIO Console server.
 
 ## Running MinIO Console server
@@ -50,7 +50,7 @@ This will regenerate all the static assets that will be served by MinIO.
 In the parent folder of where you cloned this `console` repository, clone the MinIO Repository
 
 ```shell
-git clone https://github.com/minio/minio.git
+git clone https://github.com/lgcorzo/minio.git
 ```
 
 ### 2. Update `go.mod` to use your local version
@@ -62,7 +62,7 @@ In the MinIO repository open `go.mod` and after the first `require()` directive 
 )
 
 replace (
-github.com/minio/console => "../console"
+github.com/lgcorzo/console => "../console"
 )
 
 require (

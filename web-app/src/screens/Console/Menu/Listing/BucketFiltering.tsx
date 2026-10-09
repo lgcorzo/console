@@ -14,13 +14,15 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { RefObject, useRef } from "react";
+import React, { useRef } from "react";
 import { Box, InputBox, MenuItem, SearchIcon } from "mds";
 import get from "lodash/get";
 import { useTheme } from "styled-components";
 import { AppState, useAppDispatch } from "../../../../store";
 import { menuOpen, setFilterBucket } from "../../../../systemSlice";
 import { useSelector } from "react-redux";
+
+const InputBoxAny = InputBox as React.ComponentType<any>;
 
 const BucketFiltering = () => {
   const theme = useTheme();
@@ -35,7 +37,11 @@ const BucketFiltering = () => {
 
   const expandSearchBox = () => {
     dispatch(menuOpen(true));
-    ref.current?.focus();
+    if (ref.current) {
+      ref.current.focus();
+    } else {
+      document.getElementById("filter-buckets")?.focus();
+    }
   };
 
   return (
@@ -58,7 +64,7 @@ const BucketFiltering = () => {
           },
         }}
       >
-        <InputBox
+        <InputBoxAny
           id={"filter-buckets"}
           placeholder={"Filter Buckets"}
           sx={{
@@ -76,11 +82,11 @@ const BucketFiltering = () => {
             },
           }}
           value={bucketFilter}
-          onChange={(e) => {
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
             dispatch(setFilterBucket(e.target.value));
           }}
           startIcon={<SearchIcon />}
-          ref={ref as unknown as RefObject<HTMLInputElement>}
+          ref={ref}
         />
       </Box>
     </>

@@ -51,3 +51,7 @@ public.crt
 
 # Ignore Bin files
 bin/
+
+# Graphify knowledge graph
+graphify-out/
+.graphifyignore

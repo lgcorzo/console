@@ -113,17 +113,17 @@ jobs:
         working-directory: ./web-app
         continue-on-error: false
         run: |
-          ./check-warnings.sh
+          bash ./check-warnings.sh
       - name: Check if Files are Prettified
         working-directory: ./web-app
         continue-on-error: false
         run: |
-          ./check-prettier.sh
+          bash ./check-prettier.sh
       - name: Check for dead code
         working-directory: ./web-app
         continue-on-error: false
         run: |
-          ./check-deadcode.sh
+          bash ./check-deadcode.sh
 
   latest-minio:
     name: Build latest MinIO
@@ -877,7 +877,7 @@ jobs:
         working-directory: ./web-app
         continue-on-error: false
         run: |
-          ./check-warnings-istanbul-coverage.sh
+          bash ./check-warnings-istanbul-coverage.sh
 
   compile-binary-istanbul-coverage:
     name: "Compile Console Binary with Istanbul Plugin for Coverage"

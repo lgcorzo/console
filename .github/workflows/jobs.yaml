@@ -38,6 +38,10 @@ jobs:
         uses: golangci/golangci-lint-action@v6
         with:
           version: v1.64.6
+          # The repository root has no .go files; Go packages live in
+          # subdirectories. Pass explicit package patterns so golangci-lint
+          # does not exit with "no go files to analyze" (exit code 5).
+          args: ./api/... ./cmd/... ./integration/... ./models/... ./pkg/...
 
   semgrep-static-code-analysis:
     name: "semgrep checks"

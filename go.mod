@@ -20,13 +20,13 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/jessevdk/go-flags v1.6.1
 	github.com/klauspost/compress v1.18.0
-	github.com/lgcorzo/cli v1.24.2
-	github.com/lgcorzo/highwayhash v1.0.4
-	github.com/lgcorzo/madmin-go/v3 v3.0.109
-	github.com/lgcorzo/mc v0.1.0
-	github.com/lgcorzo/minio-go/v7 v7.0.91
-	github.com/lgcorzo/selfupdate v0.6.0
-	github.com/lgcorzo/websocket v1.6.0
+	github.com/lgcorzo/cli v1.24.2-lgcorzo.1
+	github.com/lgcorzo/highwayhash v1.0.4-lgcorzo.1
+	github.com/lgcorzo/madmin-go/v3 v3.0.109-lgcorzo.1
+	github.com/lgcorzo/mc v0.1.0-lgcorzo.1
+	github.com/lgcorzo/minio-go/v7 v7.0.91-lgcorzo.2
+	github.com/lgcorzo/selfupdate v0.6.0-lgcorzo.1
+	github.com/lgcorzo/websocket v1.6.0-lgcorzo.1
 	github.com/minio/kes v0.24.0
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/rs/xid v1.6.0 // indirect
@@ -43,7 +43,7 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
-require github.com/lgcorzo/pkg/v3 v3.1.3
+require github.com/lgcorzo/pkg/v3 v3.1.3-lgcorzo.1
 
 require (
 	aead.dev/mem v0.2.0 // indirect
@@ -91,10 +91,10 @@ require (
 	github.com/lestrrat-go/iter v1.0.2 // indirect
 	github.com/lestrrat-go/jwx/v2 v2.1.4 // indirect
 	github.com/lestrrat-go/option v1.0.1 // indirect
-	github.com/lgcorzo/colorjson v1.0.8 // indirect
-	github.com/lgcorzo/crc64nvme v1.0.1 // indirect
-	github.com/lgcorzo/filepath v1.0.0 // indirect
-	github.com/lgcorzo/md5-simd v1.1.2 // indirect
+	github.com/lgcorzo/colorjson v1.0.8-lgcorzo.1 // indirect
+	github.com/lgcorzo/crc64nvme v1.0.1-lgcorzo.1 // indirect
+	github.com/lgcorzo/filepath v1.0.0-lgcorzo.1 // indirect
+	github.com/lgcorzo/md5-simd v1.1.2-lgcorzo.1 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/lufia/plan9stats v0.0.0-20250317134145-8bc96cf8fc35 // indirect
 	github.com/mailru/easyjson v0.9.0 // indirect

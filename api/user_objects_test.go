@@ -1072,7 +1072,7 @@ func Test_shareObject(t *testing.T) {
 			}
 			url, err := getShareObjectURL(ctx, client, tt.args.r, tt.args.versionID, tt.args.expires)
 			if tt.wantError != nil {
-				if !reflect.DeepEqual(err, tt.wantError) {
+				if err == nil || err.Error() != tt.wantError.Error() {
 					t.Errorf("getShareObjectURL() error: `%s`, wantErr: `%s`", err, tt.wantError)
 					return
 				}

@@ -20,6 +20,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -27,6 +28,12 @@ import (
 	"github.com/lgcorzo/console/pkg/logger/message/log"
 	c "github.com/lgcorzo/pkg/v3/console"
 )
+
+var sensitiveHeaderRE = regexp.MustCompile(`(?i)(authorization|cookie|set-cookie|x-amz-security-token|x-minio-session-token|token|password|secret|access_key|secret_key)\s*[:=]\s*([^\s,;&]+)`)
+
+func sanitizeLogMessage(msg string) string {
+	return sensitiveHeaderRE.ReplaceAllString(msg, "$1: [REDACTED]")
+}
 
 // Logger interface describes the methods that need to be implemented to satisfy the interface requirements.
 type Logger interface {
@@ -36,6 +43,7 @@ type Logger interface {
 }
 
 func consoleLog(console Logger, msg string, args ...interface{}) {
+	msg = sanitizeLogMessage(msg)
 	switch {
 	case jsonFlag:
 		// Strip escape control characters from json message
@@ -75,6 +83,7 @@ func (f fatalMsg) json(msg string, args ...interface{}) {
 	} else {
 		message = fmt.Sprint(args...)
 	}
+	message = sanitizeLogMessage(message)
 	logJSON, err := json.Marshal(&log.Entry{
 		Level:   FatalLvl.String(),
 		Message: message,
@@ -153,6 +162,7 @@ func (i infoMsg) json(msg string, args ...interface{}) {
 	} else {
 		message = fmt.Sprint(args...)
 	}
+	message = sanitizeLogMessage(message)
 	logJSON, err := json.Marshal(&log.Entry{
 		Level:   InformationLvl.String(),
 		Message: message,
@@ -185,6 +195,7 @@ func (i errorMsg) json(msg string, args ...interface{}) {
 	} else {
 		message = fmt.Sprint(args...)
 	}
+	message = sanitizeLogMessage(message)
 	logJSON, err := json.Marshal(&log.Entry{
 		Level:   ErrorLvl.String(),
 		Message: message,

@@ -24,6 +24,7 @@ const (
 	ConsoleHostname    = "CONSOLE_HOSTNAME"
 	ConsolePort        = "CONSOLE_PORT"
 	ConsoleTLSPort     = "CONSOLE_TLS_PORT"
+	ConsoleTLSInsecure = "CONSOLE_TLS_INSECURE"
 
 	// Constants for Secure middleware
 	ConsoleSecureAllowedHosts                    = "CONSOLE_SECURE_ALLOWED_HOSTS"

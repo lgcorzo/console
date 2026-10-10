@@ -76,9 +76,8 @@ var (
 			// Can't use SSLv3 because of POODLE and BEAST
 			// Can't use TLSv1.0 because of POODLE and BEAST using CBC cipher
 			// Can't use TLSv1.1 because of RC4 cipher usage
-			MinVersion: tls.VersionTLS12,
-			// Console runs in the same pod/node as MinIO this is acceptable.
-			InsecureSkipVerify: true,
+			MinVersion:         tls.VersionTLS12,
+			InsecureSkipVerify: getConsoleTLSInsecure(),
 			RootCAs:            GlobalRootCAs,
 		},
 	}
@@ -277,4 +276,8 @@ func getConsoleAnimatedLogin() bool {
 
 func getConsoleBrowserRedirectURL() string {
 	return env.Get(ConsoleBrowserRedirectURL, "")
+}
+
+func getConsoleTLSInsecure() bool {
+	return strings.ToLower(env.Get(ConsoleTLSInsecure, "off")) == "on"
 }

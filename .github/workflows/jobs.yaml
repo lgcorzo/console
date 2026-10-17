@@ -79,7 +79,7 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: "yarn"
-          cache-dependency-path: web-app/yarn.lock
+          cache-dependency-path: yarn.lock
       - name: Enable Corepack
         run: corepack enable
       - uses: actions/cache@v4
@@ -821,7 +821,7 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: "yarn"
-          cache-dependency-path: web-app/yarn.lock
+          cache-dependency-path: yarn.lock
       - name: Enable Corepack
         run: corepack enable
       - uses: actions/cache@v4

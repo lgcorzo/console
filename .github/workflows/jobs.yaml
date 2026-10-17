@@ -79,7 +79,7 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: "yarn"
-          cache-dependency-path: yarn.lock
+          cache-dependency-path: web-app/yarn.lock
       - name: Enable Corepack
         run: corepack enable
       - uses: actions/cache@v4
@@ -219,7 +219,7 @@ jobs:
       - name: Enable Corepack
         run: corepack enable
       - name: Install MinIO JS
-        working-directory: ./
+        working-directory: ./web-app
         continue-on-error: false
         run: |
           yarn add minio
@@ -270,7 +270,7 @@ jobs:
       - name: Enable Corepack
         run: corepack enable
       - name: Install MinIO JS
-        working-directory: ./
+        working-directory: ./web-app
         continue-on-error: false
         run: |
           yarn add minio
@@ -320,7 +320,7 @@ jobs:
       - name: Enable Corepack
         run: corepack enable
       - name: Install MinIO JS
-        working-directory: ./
+        working-directory: ./web-app
         continue-on-error: false
         run: |
           yarn add minio
@@ -369,7 +369,7 @@ jobs:
       - name: Enable Corepack
         run: corepack enable
       - name: Install MinIO JS
-        working-directory: ./
+        working-directory: ./web-app
         continue-on-error: false
         run: |
           yarn add minio
@@ -418,7 +418,7 @@ jobs:
       - name: Enable Corepack
         run: corepack enable
       - name: Install MinIO JS
-        working-directory: ./
+        working-directory: ./web-app
         continue-on-error: false
         run: |
           yarn add minio
@@ -464,7 +464,7 @@ jobs:
       - name: Enable Corepack
         run: corepack enable
       - name: Install MinIO JS
-        working-directory: ./
+        working-directory: ./web-app
         continue-on-error: false
         run: |
           yarn add minio
@@ -510,7 +510,7 @@ jobs:
       - name: Enable Corepack
         run: corepack enable
       - name: Install MinIO JS
-        working-directory: ./
+        working-directory: ./web-app
         continue-on-error: false
         run: |
           yarn add minio
@@ -821,7 +821,7 @@ jobs:
         with:
           node-version-file: '.nvmrc'
           cache: "yarn"
-          cache-dependency-path: yarn.lock
+          cache-dependency-path: web-app/yarn.lock
       - name: Enable Corepack
         run: corepack enable
       - uses: actions/cache@v4

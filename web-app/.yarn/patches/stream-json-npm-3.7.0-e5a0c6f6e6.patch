@@ -1,0 +1,769 @@
+diff --git a/jsonl/Parser.cjs b/jsonl/Parser.cjs
+new file mode 100644
+index 0000000000000000000000000000000000000000..9eca3dcbc9f7274d0f110918ba09c17516f5e4e4
+--- /dev/null
++++ b/jsonl/Parser.cjs
+@@ -0,0 +1,178 @@
++'use strict';
++
++const {Transform} = require('stream');
++const {StringDecoder} = require('string_decoder');
++
++class Utf8Stream extends Transform {
++  constructor(options) {
++    super(Object.assign({}, options, {writableObjectMode: false}));
++    this._buffer = '';
++  }
++
++  _transform(chunk, encoding, callback) {
++    if (typeof chunk == 'string') {
++      this._transform = this._transformString;
++    } else {
++      this._stringDecoder = new StringDecoder();
++      this._transform = this._transformBuffer;
++    }
++    this._transform(chunk, encoding, callback);
++  }
++
++  _transformBuffer(chunk, _, callback) {
++    this._buffer += this._stringDecoder.write(chunk);
++    this._processBuffer(callback);
++  }
++
++  _transformString(chunk, _, callback) {
++    this._buffer += chunk.toString();
++    this._processBuffer(callback);
++  }
++
++  _processBuffer(callback) {
++    if (this._buffer) {
++      this.push(this._buffer, 'utf8');
++      this._buffer = '';
++    }
++    callback(null);
++  }
++
++  _flushInput() {
++    if (this._stringDecoder) {
++      this._buffer += this._stringDecoder.end();
++    }
++  }
++
++  _flush(callback) {
++    this._flushInput();
++    this._processBuffer(callback);
++  }
++}
++
++class JsonlParser extends Utf8Stream {
++  static make(options) {
++    return new JsonlParser(options);
++  }
++
++  static checkedParse(input, reviver, errorIndicator) {
++    try {
++      return JSON.parse(input, reviver);
++    } catch (error) {
++      if (typeof errorIndicator == 'function') return errorIndicator(error, input, reviver);
++    }
++    return errorIndicator;
++  }
++
++  constructor(options) {
++    super(Object.assign({}, options, {readableObjectMode: true}));
++    this._rest = '';
++    this._counter = 0;
++    this._reviver = options && options.reviver;
++    this._errorIndicator = options && options.errorIndicator;
++    if (options && options.checkErrors) {
++      this._processBuffer = this._checked_processBuffer;
++      this._flush = this._checked_flush;
++    }
++    if (options && 'errorIndicator' in options) {
++      this._processBuffer = this._suppressed_processBuffer;
++      this._flush = this._suppressed_flush;
++    }
++  }
++
++  _processBuffer(callback) {
++    const lines = this._buffer.split('\n');
++    this._rest += lines[0];
++    if (lines.length > 1) {
++      this._rest && this.push({key: this._counter++, value: JSON.parse(this._rest, this._reviver)});
++      this._rest = lines.pop();
++      for (let i = 1; i < lines.length; ++i) {
++        lines[i] && this.push({key: this._counter++, value: JSON.parse(lines[i], this._reviver)});
++      }
++    }
++    this._buffer = '';
++    callback(null);
++  }
++
++  _flush(callback) {
++    super._flush(error => {
++      if (error) return callback(error);
++      if (this._rest) {
++        this.push({key: this._counter++, value: JSON.parse(this._rest, this._reviver)});
++        this._rest = '';
++      }
++      callback(null);
++    });
++  }
++
++  _suppressed_processBuffer(callback) {
++    const lines = this._buffer.split('\n');
++    this._rest += lines[0];
++    if (lines.length > 1) {
++      if (this._rest) {
++        const value = JsonlParser.checkedParse(this._rest, this._reviver, this._errorIndicator);
++        value !== undefined && this.push({key: this._counter++, value});
++      }
++      this._rest = lines.pop();
++      for (let i = 1; i < lines.length; ++i) {
++        if (!lines[i]) continue;
++        const value = JsonlParser.checkedParse(lines[i], this._reviver, this._errorIndicator);
++        value !== undefined && this.push({key: this._counter++, value});
++      }
++    }
++    this._buffer = '';
++    callback(null);
++  }
++
++  _suppressed_flush(callback) {
++    super._flush(error => {
++      if (error) return callback(error);
++      if (this._rest) {
++        const value = JsonlParser.checkedParse(this._rest, this._reviver, this._errorIndicator);
++        value !== undefined && this.push({key: this._counter++, value});
++        this._rest = '';
++      }
++      callback(null);
++    });
++  }
++
++  _checked_processBuffer(callback) {
++    const lines = this._buffer.split('\n');
++    this._rest += lines[0];
++    if (lines.length > 1) {
++      try {
++        this._rest && this.push({key: this._counter++, value: JSON.parse(this._rest, this._reviver)});
++        this._rest = lines.pop();
++        for (let i = 1; i < lines.length; ++i) {
++          lines[i] && this.push({key: this._counter++, value: JSON.parse(lines[i], this._reviver)});
++        }
++      } catch (cbErr) {
++        this._buffer = '';
++        callback(cbErr);
++        return;
++      }
++    }
++    this._buffer = '';
++    callback(null);
++  }
++
++  _checked_flush(callback) {
++    super._flush(error => {
++      if (error) return callback(error);
++      if (this._rest) {
++        try {
++          this.push({key: this._counter++, value: JSON.parse(this._rest, this._reviver)});
++        } catch (cbErr) {
++          this._rest = '';
++          callback(cbErr);
++          return;
++        }
++        this._rest = '';
++      }
++      callback(null);
++    });
++  }
++}
++JsonlParser.parser = JsonlParser.make;
++JsonlParser.make.Constructor = JsonlParser;
++
++module.exports = JsonlParser;
+diff --git a/jsonl/Parser.js b/jsonl/Parser.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..9eca3dcbc9f7274d0f110918ba09c17516f5e4e4
+--- /dev/null
++++ b/jsonl/Parser.js
+@@ -0,0 +1,178 @@
++'use strict';
++
++const {Transform} = require('stream');
++const {StringDecoder} = require('string_decoder');
++
++class Utf8Stream extends Transform {
++  constructor(options) {
++    super(Object.assign({}, options, {writableObjectMode: false}));
++    this._buffer = '';
++  }
++
++  _transform(chunk, encoding, callback) {
++    if (typeof chunk == 'string') {
++      this._transform = this._transformString;
++    } else {
++      this._stringDecoder = new StringDecoder();
++      this._transform = this._transformBuffer;
++    }
++    this._transform(chunk, encoding, callback);
++  }
++
++  _transformBuffer(chunk, _, callback) {
++    this._buffer += this._stringDecoder.write(chunk);
++    this._processBuffer(callback);
++  }
++
++  _transformString(chunk, _, callback) {
++    this._buffer += chunk.toString();
++    this._processBuffer(callback);
++  }
++
++  _processBuffer(callback) {
++    if (this._buffer) {
++      this.push(this._buffer, 'utf8');
++      this._buffer = '';
++    }
++    callback(null);
++  }
++
++  _flushInput() {
++    if (this._stringDecoder) {
++      this._buffer += this._stringDecoder.end();
++    }
++  }
++
++  _flush(callback) {
++    this._flushInput();
++    this._processBuffer(callback);
++  }
++}
++
++class JsonlParser extends Utf8Stream {
++  static make(options) {
++    return new JsonlParser(options);
++  }
++
++  static checkedParse(input, reviver, errorIndicator) {
++    try {
++      return JSON.parse(input, reviver);
++    } catch (error) {
++      if (typeof errorIndicator == 'function') return errorIndicator(error, input, reviver);
++    }
++    return errorIndicator;
++  }
++
++  constructor(options) {
++    super(Object.assign({}, options, {readableObjectMode: true}));
++    this._rest = '';
++    this._counter = 0;
++    this._reviver = options && options.reviver;
++    this._errorIndicator = options && options.errorIndicator;
++    if (options && options.checkErrors) {
++      this._processBuffer = this._checked_processBuffer;
++      this._flush = this._checked_flush;
++    }
++    if (options && 'errorIndicator' in options) {
++      this._processBuffer = this._suppressed_processBuffer;
++      this._flush = this._suppressed_flush;
++    }
++  }
++
++  _processBuffer(callback) {
++    const lines = this._buffer.split('\n');
++    this._rest += lines[0];
++    if (lines.length > 1) {
++      this._rest && this.push({key: this._counter++, value: JSON.parse(this._rest, this._reviver)});
++      this._rest = lines.pop();
++      for (let i = 1; i < lines.length; ++i) {
++        lines[i] && this.push({key: this._counter++, value: JSON.parse(lines[i], this._reviver)});
++      }
++    }
++    this._buffer = '';
++    callback(null);
++  }
++
++  _flush(callback) {
++    super._flush(error => {
++      if (error) return callback(error);
++      if (this._rest) {
++        this.push({key: this._counter++, value: JSON.parse(this._rest, this._reviver)});
++        this._rest = '';
++      }
++      callback(null);
++    });
++  }
++
++  _suppressed_processBuffer(callback) {
++    const lines = this._buffer.split('\n');
++    this._rest += lines[0];
++    if (lines.length > 1) {
++      if (this._rest) {
++        const value = JsonlParser.checkedParse(this._rest, this._reviver, this._errorIndicator);
++        value !== undefined && this.push({key: this._counter++, value});
++      }
++      this._rest = lines.pop();
++      for (let i = 1; i < lines.length; ++i) {
++        if (!lines[i]) continue;
++        const value = JsonlParser.checkedParse(lines[i], this._reviver, this._errorIndicator);
++        value !== undefined && this.push({key: this._counter++, value});
++      }
++    }
++    this._buffer = '';
++    callback(null);
++  }
++
++  _suppressed_flush(callback) {
++    super._flush(error => {
++      if (error) return callback(error);
++      if (this._rest) {
++        const value = JsonlParser.checkedParse(this._rest, this._reviver, this._errorIndicator);
++        value !== undefined && this.push({key: this._counter++, value});
++        this._rest = '';
++      }
++      callback(null);
++    });
++  }
++
++  _checked_processBuffer(callback) {
++    const lines = this._buffer.split('\n');
++    this._rest += lines[0];
++    if (lines.length > 1) {
++      try {
++        this._rest && this.push({key: this._counter++, value: JSON.parse(this._rest, this._reviver)});
++        this._rest = lines.pop();
++        for (let i = 1; i < lines.length; ++i) {
++          lines[i] && this.push({key: this._counter++, value: JSON.parse(lines[i], this._reviver)});
++        }
++      } catch (cbErr) {
++        this._buffer = '';
++        callback(cbErr);
++        return;
++      }
++    }
++    this._buffer = '';
++    callback(null);
++  }
++
++  _checked_flush(callback) {
++    super._flush(error => {
++      if (error) return callback(error);
++      if (this._rest) {
++        try {
++          this.push({key: this._counter++, value: JSON.parse(this._rest, this._reviver)});
++        } catch (cbErr) {
++          this._rest = '';
++          callback(cbErr);
++          return;
++        }
++        this._rest = '';
++      }
++      callback(null);
++    });
++  }
++}
++JsonlParser.parser = JsonlParser.make;
++JsonlParser.make.Constructor = JsonlParser;
++
++module.exports = JsonlParser;
+diff --git a/jsonl/package.json b/jsonl/package.json
+new file mode 100644
+index 0000000000000000000000000000000000000000..b731bd61b9cefea28f38a00e57c8cb9a3866bd84
+--- /dev/null
++++ b/jsonl/package.json
+@@ -0,0 +1 @@
++{"type": "commonjs"}
+diff --git a/package.json b/package.json
+index a39e106a58a62a378eed66e3c1e6ba1461ed0bdf..f866135a26c1dcbe77ea85ad7ad9f86b1fed62cd 100644
+--- a/package.json
++++ b/package.json
+@@ -6,6 +6,21 @@
+   "main": "./src/index.js",
+   "types": "./src/index.d.ts",
+   "exports": {
++    "./jsonl/Parser.js": {
++      "require": "./src/jsonl/Parser.cjs",
++      "import": "./src/jsonl/parser.js",
++      "default": "./src/jsonl/Parser.cjs"
++    },
++    "./jsonl/Parser": {
++      "require": "./src/jsonl/Parser.cjs",
++      "import": "./src/jsonl/parser.js",
++      "default": "./src/jsonl/Parser.cjs"
++    },
++    "./src/jsonl/Parser.js": {
++      "require": "./src/jsonl/Parser.cjs",
++      "import": "./src/jsonl/parser.js",
++      "default": "./src/jsonl/Parser.cjs"
++    },
+     ".": "./src/index.js",
+     "./web": "./src/web/index.js",
+     "./*": "./src/*"
+diff --git a/src/jsonl/Parser.cjs b/src/jsonl/Parser.cjs
+new file mode 100644
+index 0000000000000000000000000000000000000000..9eca3dcbc9f7274d0f110918ba09c17516f5e4e4
+--- /dev/null
++++ b/src/jsonl/Parser.cjs
+@@ -0,0 +1,178 @@
++'use strict';
++
++const {Transform} = require('stream');
++const {StringDecoder} = require('string_decoder');
++
++class Utf8Stream extends Transform {
++  constructor(options) {
++    super(Object.assign({}, options, {writableObjectMode: false}));
++    this._buffer = '';
++  }
++
++  _transform(chunk, encoding, callback) {
++    if (typeof chunk == 'string') {
++      this._transform = this._transformString;
++    } else {
++      this._stringDecoder = new StringDecoder();
++      this._transform = this._transformBuffer;
++    }
++    this._transform(chunk, encoding, callback);
++  }
++
++  _transformBuffer(chunk, _, callback) {
++    this._buffer += this._stringDecoder.write(chunk);
++    this._processBuffer(callback);
++  }
++
++  _transformString(chunk, _, callback) {
++    this._buffer += chunk.toString();
++    this._processBuffer(callback);
++  }
++
++  _processBuffer(callback) {
++    if (this._buffer) {
++      this.push(this._buffer, 'utf8');
++      this._buffer = '';
++    }
++    callback(null);
++  }
++
++  _flushInput() {
++    if (this._stringDecoder) {
++      this._buffer += this._stringDecoder.end();
++    }
++  }
++
++  _flush(callback) {
++    this._flushInput();
++    this._processBuffer(callback);
++  }
++}
++
++class JsonlParser extends Utf8Stream {
++  static make(options) {
++    return new JsonlParser(options);
++  }
++
++  static checkedParse(input, reviver, errorIndicator) {
++    try {
++      return JSON.parse(input, reviver);
++    } catch (error) {
++      if (typeof errorIndicator == 'function') return errorIndicator(error, input, reviver);
++    }
++    return errorIndicator;
++  }
++
++  constructor(options) {
++    super(Object.assign({}, options, {readableObjectMode: true}));
++    this._rest = '';
++    this._counter = 0;
++    this._reviver = options && options.reviver;
++    this._errorIndicator = options && options.errorIndicator;
++    if (options && options.checkErrors) {
++      this._processBuffer = this._checked_processBuffer;
++      this._flush = this._checked_flush;
++    }
++    if (options && 'errorIndicator' in options) {
++      this._processBuffer = this._suppressed_processBuffer;
++      this._flush = this._suppressed_flush;
++    }
++  }
++
++  _processBuffer(callback) {
++    const lines = this._buffer.split('\n');
++    this._rest += lines[0];
++    if (lines.length > 1) {
++      this._rest && this.push({key: this._counter++, value: JSON.parse(this._rest, this._reviver)});
++      this._rest = lines.pop();
++      for (let i = 1; i < lines.length; ++i) {
++        lines[i] && this.push({key: this._counter++, value: JSON.parse(lines[i], this._reviver)});
++      }
++    }
++    this._buffer = '';
++    callback(null);
++  }
++
++  _flush(callback) {
++    super._flush(error => {
++      if (error) return callback(error);
++      if (this._rest) {
++        this.push({key: this._counter++, value: JSON.parse(this._rest, this._reviver)});
++        this._rest = '';
++      }
++      callback(null);
++    });
++  }
++
++  _suppressed_processBuffer(callback) {
++    const lines = this._buffer.split('\n');
++    this._rest += lines[0];
++    if (lines.length > 1) {
++      if (this._rest) {
++        const value = JsonlParser.checkedParse(this._rest, this._reviver, this._errorIndicator);
++        value !== undefined && this.push({key: this._counter++, value});
++      }
++      this._rest = lines.pop();
++      for (let i = 1; i < lines.length; ++i) {
++        if (!lines[i]) continue;
++        const value = JsonlParser.checkedParse(lines[i], this._reviver, this._errorIndicator);
++        value !== undefined && this.push({key: this._counter++, value});
++      }
++    }
++    this._buffer = '';
++    callback(null);
++  }
++
++  _suppressed_flush(callback) {
++    super._flush(error => {
++      if (error) return callback(error);
++      if (this._rest) {
++        const value = JsonlParser.checkedParse(this._rest, this._reviver, this._errorIndicator);
++        value !== undefined && this.push({key: this._counter++, value});
++        this._rest = '';
++      }
++      callback(null);
++    });
++  }
++
++  _checked_processBuffer(callback) {
++    const lines = this._buffer.split('\n');
++    this._rest += lines[0];
++    if (lines.length > 1) {
++      try {
++        this._rest && this.push({key: this._counter++, value: JSON.parse(this._rest, this._reviver)});
++        this._rest = lines.pop();
++        for (let i = 1; i < lines.length; ++i) {
++          lines[i] && this.push({key: this._counter++, value: JSON.parse(lines[i], this._reviver)});
++        }
++      } catch (cbErr) {
++        this._buffer = '';
++        callback(cbErr);
++        return;
++      }
++    }
++    this._buffer = '';
++    callback(null);
++  }
++
++  _checked_flush(callback) {
++    super._flush(error => {
++      if (error) return callback(error);
++      if (this._rest) {
++        try {
++          this.push({key: this._counter++, value: JSON.parse(this._rest, this._reviver)});
++        } catch (cbErr) {
++          this._rest = '';
++          callback(cbErr);
++          return;
++        }
++        this._rest = '';
++      }
++      callback(null);
++    });
++  }
++}
++JsonlParser.parser = JsonlParser.make;
++JsonlParser.make.Constructor = JsonlParser;
++
++module.exports = JsonlParser;
+diff --git a/src/jsonl/Parser.js b/src/jsonl/Parser.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..9eca3dcbc9f7274d0f110918ba09c17516f5e4e4
+--- /dev/null
++++ b/src/jsonl/Parser.js
+@@ -0,0 +1,178 @@
++'use strict';
++
++const {Transform} = require('stream');
++const {StringDecoder} = require('string_decoder');
++
++class Utf8Stream extends Transform {
++  constructor(options) {
++    super(Object.assign({}, options, {writableObjectMode: false}));
++    this._buffer = '';
++  }
++
++  _transform(chunk, encoding, callback) {
++    if (typeof chunk == 'string') {
++      this._transform = this._transformString;
++    } else {
++      this._stringDecoder = new StringDecoder();
++      this._transform = this._transformBuffer;
++    }
++    this._transform(chunk, encoding, callback);
++  }
++
++  _transformBuffer(chunk, _, callback) {
++    this._buffer += this._stringDecoder.write(chunk);
++    this._processBuffer(callback);
++  }
++
++  _transformString(chunk, _, callback) {
++    this._buffer += chunk.toString();
++    this._processBuffer(callback);
++  }
++
++  _processBuffer(callback) {
++    if (this._buffer) {
++      this.push(this._buffer, 'utf8');
++      this._buffer = '';
++    }
++    callback(null);
++  }
++
++  _flushInput() {
++    if (this._stringDecoder) {
++      this._buffer += this._stringDecoder.end();
++    }
++  }
++
++  _flush(callback) {
++    this._flushInput();
++    this._processBuffer(callback);
++  }
++}
++
++class JsonlParser extends Utf8Stream {
++  static make(options) {
++    return new JsonlParser(options);
++  }
++
++  static checkedParse(input, reviver, errorIndicator) {
++    try {
++      return JSON.parse(input, reviver);
++    } catch (error) {
++      if (typeof errorIndicator == 'function') return errorIndicator(error, input, reviver);
++    }
++    return errorIndicator;
++  }
++
++  constructor(options) {
++    super(Object.assign({}, options, {readableObjectMode: true}));
++    this._rest = '';
++    this._counter = 0;
++    this._reviver = options && options.reviver;
++    this._errorIndicator = options && options.errorIndicator;
++    if (options && options.checkErrors) {
++      this._processBuffer = this._checked_processBuffer;
++      this._flush = this._checked_flush;
++    }
++    if (options && 'errorIndicator' in options) {
++      this._processBuffer = this._suppressed_processBuffer;
++      this._flush = this._suppressed_flush;
++    }
++  }
++
++  _processBuffer(callback) {
++    const lines = this._buffer.split('\n');
++    this._rest += lines[0];
++    if (lines.length > 1) {
++      this._rest && this.push({key: this._counter++, value: JSON.parse(this._rest, this._reviver)});
++      this._rest = lines.pop();
++      for (let i = 1; i < lines.length; ++i) {
++        lines[i] && this.push({key: this._counter++, value: JSON.parse(lines[i], this._reviver)});
++      }
++    }
++    this._buffer = '';
++    callback(null);
++  }
++
++  _flush(callback) {
++    super._flush(error => {
++      if (error) return callback(error);
++      if (this._rest) {
++        this.push({key: this._counter++, value: JSON.parse(this._rest, this._reviver)});
++        this._rest = '';
++      }
++      callback(null);
++    });
++  }
++
++  _suppressed_processBuffer(callback) {
++    const lines = this._buffer.split('\n');
++    this._rest += lines[0];
++    if (lines.length > 1) {
++      if (this._rest) {
++        const value = JsonlParser.checkedParse(this._rest, this._reviver, this._errorIndicator);
++        value !== undefined && this.push({key: this._counter++, value});
++      }
++      this._rest = lines.pop();
++      for (let i = 1; i < lines.length; ++i) {
++        if (!lines[i]) continue;
++        const value = JsonlParser.checkedParse(lines[i], this._reviver, this._errorIndicator);
++        value !== undefined && this.push({key: this._counter++, value});
++      }
++    }
++    this._buffer = '';
++    callback(null);
++  }
++
++  _suppressed_flush(callback) {
++    super._flush(error => {
++      if (error) return callback(error);
++      if (this._rest) {
++        const value = JsonlParser.checkedParse(this._rest, this._reviver, this._errorIndicator);
++        value !== undefined && this.push({key: this._counter++, value});
++        this._rest = '';
++      }
++      callback(null);
++    });
++  }
++
++  _checked_processBuffer(callback) {
++    const lines = this._buffer.split('\n');
++    this._rest += lines[0];
++    if (lines.length > 1) {
++      try {
++        this._rest && this.push({key: this._counter++, value: JSON.parse(this._rest, this._reviver)});
++        this._rest = lines.pop();
++        for (let i = 1; i < lines.length; ++i) {
++          lines[i] && this.push({key: this._counter++, value: JSON.parse(lines[i], this._reviver)});
++        }
++      } catch (cbErr) {
++        this._buffer = '';
++        callback(cbErr);
++        return;
++      }
++    }
++    this._buffer = '';
++    callback(null);
++  }
++
++  _checked_flush(callback) {
++    super._flush(error => {
++      if (error) return callback(error);
++      if (this._rest) {
++        try {
++          this.push({key: this._counter++, value: JSON.parse(this._rest, this._reviver)});
++        } catch (cbErr) {
++          this._rest = '';
++          callback(cbErr);
++          return;
++        }
++        this._rest = '';
++      }
++      callback(null);
++    });
++  }
++}
++JsonlParser.parser = JsonlParser.make;
++JsonlParser.make.Constructor = JsonlParser;
++
++module.exports = JsonlParser;

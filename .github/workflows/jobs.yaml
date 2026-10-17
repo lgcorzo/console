@@ -75,16 +75,13 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NVMRC }}
+          node-version-file: '.nvmrc'
           cache: "yarn"
           cache-dependency-path: web-app/yarn.lock
+      - name: Enable Corepack
+        run: corepack enable
       - uses: actions/cache@v4
         id: assets-cache
         name: Assets Cache
@@ -216,14 +213,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NVMRC }}
+          node-version-file: '.nvmrc'
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install MinIO JS
         working-directory: ./
         continue-on-error: false
@@ -270,14 +264,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NVMRC }}
+          node-version-file: '.nvmrc'
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install MinIO JS
         working-directory: ./
         continue-on-error: false
@@ -323,14 +314,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NVMRC }}
+          node-version-file: '.nvmrc'
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install MinIO JS
         working-directory: ./
         continue-on-error: false
@@ -375,14 +363,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NVMRC }}
+          node-version-file: '.nvmrc'
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install MinIO JS
         working-directory: ./
         continue-on-error: false
@@ -427,14 +412,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NVMRC }}
+          node-version-file: '.nvmrc'
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install MinIO JS
         working-directory: ./
         continue-on-error: false
@@ -476,14 +458,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NVMRC }}
+          node-version-file: '.nvmrc'
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install MinIO JS
         working-directory: ./
         continue-on-error: false
@@ -525,14 +504,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NVMRC }}
+          node-version-file: '.nvmrc'
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install MinIO JS
         working-directory: ./
         continue-on-error: false
@@ -841,16 +817,13 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NVMRC }}
+          node-version-file: '.nvmrc'
           cache: "yarn"
           cache-dependency-path: web-app/yarn.lock
+      - name: Enable Corepack
+        run: corepack enable
       - uses: actions/cache@v4
         id: assets-cache-istanbul-coverage
         name: Assets Cache Istanbul Coverage
@@ -1071,11 +1044,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Enable Corepack
-        run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: '.nvmrc'
+      - name: Enable Corepack
+        run: corepack enable
 
       - name: Install dependencies
         run: |

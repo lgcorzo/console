@@ -765,7 +765,7 @@ jobs:
           then
             echo "Play is up and running, we will proceed with the play part for coverage"
             echo "Create the folder to put the all.out file"
-            ./mc mb --ignore-existing play/builds/
+            ./mc mb --ignore-existing play/builds/ || true
             echo "Copy the all.out file to play bucket"
             echo ${{ github.repository }}
             echo ${{ github.event.number }}
@@ -793,7 +793,7 @@ jobs:
             ./mc cp coverage-pkg.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
             ./mc cp ../pkg/coverage/coverage-pkg.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
             ./mc cp ../pkg/coverage/coverage-pkg.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
-            ./mc anonymous set public play/builds
+            ./mc anonymous set public play/builds || true
           else
             echo "Play is down, please report it on hack channel, no coverage is going to be uploaded!!!"
           fi

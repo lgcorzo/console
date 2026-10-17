@@ -95,6 +95,9 @@ const systemSlice = createSlice({
   reducers: {
     userLogged: (state, action: PayloadAction<boolean>) => {
       state.loggedIn = action.payload;
+      if (action.payload) {
+        state.loadBucketsListing = true;
+      }
     },
     showMarketplace: (state, action: PayloadAction<boolean>) => {
       state.showMarketplace = action.payload;

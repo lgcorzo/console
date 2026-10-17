@@ -21,7 +21,7 @@ import { namedTestBucketBrowseButtonFor } from "../utils/functions";
 import * as elements from "../utils/elements";
 import { acknowledgeButton } from "../utils/elements";
 
-fixture("Test resources policy").page("http://localhost:9090/");
+fixture("Test same bucket path in Console").page("http://localhost:9090/");
 
 const bucketName = "bucket-with-dash";
 const testBucketBrowseButton = namedTestBucketBrowseButtonFor(bucketName);
@@ -44,9 +44,23 @@ test
     async (t) => {
       await t
         .useRole(roles.admin)
+        .navigateTo("http://localhost:9090/")
         .click(acknowledgeButton)
         .typeText(elements.filterBuckets, bucketName, { replace: true })
-        .wait(1500)
+        .wait(1500);
+
+      if (!(await testBucketBrowseButton.exists)) {
+        await t.eval(() => window.location.reload());
+        await t.wait(2000);
+        if (await acknowledgeButton.exists) {
+          await t.click(acknowledgeButton);
+        }
+        await t
+          .typeText(elements.filterBuckets, bucketName, { replace: true })
+          .wait(1500);
+      }
+
+      await t
         .click(testBucketBrowseButton)
         .wait(1500)
         .click(Selector("label").withText("Show deleted objects"))

@@ -16852,19 +16852,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stream-chain@npm:^2.2.5":
-  version: 2.2.5
-  resolution: "stream-chain@npm:2.2.5"
-  checksum: 10c0/c512f50190d7c92d688fa64e7af540c51b661f9c2b775fc72bca38ea9bca515c64c22c2197b1be463741daacbaaa2dde8a8ea24ebda46f08391224f15249121a
+"stream-chain@npm:^4.2.5":
+  version: 4.2.6
+  resolution: "stream-chain@npm:4.2.6"
+  checksum: 10c0/bcfec082d8ab57ff612b23c64e5917f47db1a6111954ca6a5f5fefe2e8d1c4be6962a8cd41c23fd2dda02e3b73077d7ef73adcd2bb5f8d183d294ab1c22219a1
   languageName: node
   linkType: hard
 
-"stream-json@npm:1.9.1":
-  version: 1.9.1
-  resolution: "stream-json@npm:1.9.1"
+"stream-json@npm:3.7.0":
+  version: 3.7.0
+  resolution: "stream-json@npm:3.7.0"
   dependencies:
-    stream-chain: "npm:^2.2.5"
-  checksum: 10c0/0521e5cb3fb6b0e2561d715975e891bd81fa77d0239c8d0b1756846392bc3c7cdd7f1ddb0fe7ed77e6fdef58daab9e665d3b39f7d677bd0859e65a2bff59b92c
+    stream-chain: "npm:^4.2.5"
+  checksum: 10c0/5f56acbd01245580f947697de546f469c67714656ee31765631972841aed336984a25ebeb70fcb6cccf1c638827a9655d552a4f7a4ab9687bf26463e0cf24394
+  languageName: node
+  linkType: hard
+
+"stream-json@patch:stream-json@npm%3A3.7.0#~/.yarn/patches/stream-json-npm-3.7.0-e5a0c6f6e6.patch":
+  version: 3.7.0
+  resolution: "stream-json@patch:stream-json@npm%3A3.7.0#~/.yarn/patches/stream-json-npm-3.7.0-e5a0c6f6e6.patch::version=3.7.0&hash=f41121"
+  dependencies:
+    stream-chain: "npm:^4.2.5"
+  checksum: 10c0/771558f7cfa0630a7b00994f399afa8c0b996a9ade423fee1ffb73b5944aaf7f60cdc636a48724ec5308fc69d3432c817428a1212e6cadfa2a7bed09ae7b269a
   languageName: node
   linkType: hard
 

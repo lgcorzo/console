@@ -70,12 +70,18 @@ __init__() {
   export PATH=${PATH}:${GOPATH}/bin
 
   if ! command -v mc >/dev/null 2>&1; then
-    if command -v docker >/dev/null 2>&1; then
-      docker run --rm --entrypoint cat quay.io/minio/aistor/mc:latest /usr/bin/mc > mc
-      chmod +x mc
-      sudo mv mc /usr/local/bin || mv mc /usr/local/bin
-      sudo chmod +x /usr/local/bin/mc || chmod +x /usr/local/bin/mc || true
+    if command -v gh >/dev/null 2>&1; then
+      gh release download --repo minio/mc -p "mc.linux-amd64.RELEASE*Z" -O mc || {
+        MC_URL=$(curl -sSfL https://api.github.com/repos/minio/mc/releases/latest | grep "browser_download_url.*mc\.linux-amd64\.RELEASE.*Z" | cut -d : -f 2,3 | tr -d "[:space:]\"")
+        curl -sSfL "$MC_URL" -o mc
+      }
+    else
+      MC_URL=$(curl -sSfL https://api.github.com/repos/minio/mc/releases/latest | grep "browser_download_url.*mc\.linux-amd64\.RELEASE.*Z" | cut -d : -f 2,3 | tr -d "[:space:]\"")
+      curl -sSfL "$MC_URL" -o mc
     fi
+    chmod +x mc
+    sudo mv mc /usr/local/bin || mv mc /usr/local/bin
+    sudo chmod +x /usr/local/bin/mc || chmod +x /usr/local/bin/mc || true
   fi
 
   add_alias

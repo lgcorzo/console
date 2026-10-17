@@ -673,7 +673,10 @@ jobs:
 
           echo "Create bucket for replication with versioning"
           echo "Download mc for Ubuntu"
-          docker run --rm --entrypoint cat quay.io/minio/aistor/mc:latest /usr/bin/mc > mc
+          GH_TOKEN="${{ github.token }}" gh release download --repo minio/mc -p "mc.linux-amd64.RELEASE*Z" -O mc || {
+            MC_URL=$(curl -sSfL https://api.github.com/repos/minio/mc/releases/latest | grep "browser_download_url.*mc\.linux-amd64\.RELEASE.*Z\"" | cut -d : -f 2,3 | tr -d "[:space:]\"")
+            curl -sSfL "$MC_URL" -o mc
+          }
           echo "Change the permissions to execute mc command"
           chmod +x mc
 
@@ -750,7 +753,10 @@ jobs:
           echo "put together the outs for final coverage resolution"
           ./gocovmerge ../integration/coverage/system.out ../api/coverage/coverage.out ../pkg/coverage/coverage-pkg.out > all.out
           echo "Download mc for Ubuntu"
-          docker run --rm --entrypoint cat quay.io/minio/aistor/mc:latest /usr/bin/mc > mc
+          GH_TOKEN="${{ github.token }}" gh release download --repo minio/mc -p "mc.linux-amd64.RELEASE*Z" -O mc || {
+            MC_URL=$(curl -sSfL https://api.github.com/repos/minio/mc/releases/latest | grep "browser_download_url.*mc\.linux-amd64\.RELEASE.*Z\"" | cut -d : -f 2,3 | tr -d "[:space:]\"")
+            curl -sSfL "$MC_URL" -o mc
+          }
           echo "Change the permissions to execute mc command"
           chmod +x mc
           echo "Only run our test if play is up and running"

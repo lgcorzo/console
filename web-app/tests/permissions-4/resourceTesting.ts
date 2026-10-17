@@ -69,7 +69,7 @@ test
       await t
         .useRole(roles.conditions2)
         .click(acknowledgeButton)
-        .typeText(elements.filterBuckets, bucket1)
+        .typeText(elements.filterBuckets, bucket1, { replace: true })
         .click(test1BucketBrowseButton)
         .wait(1500)
         .click(
@@ -126,7 +126,7 @@ test
     await t
       .useRole(roles.conditions1)
       .click(acknowledgeButton)
-      .typeText(elements.filterBuckets, bucket1)
+      .typeText(elements.filterBuckets, bucket1, { replace: true })
       .click(test1BucketBrowseButton)
       .wait(1500)
       .click(
@@ -191,7 +191,7 @@ test
     await t
       .useRole(roles.conditions3)
       .click(acknowledgeButton)
-      .typeText(elements.filterBuckets, bucket3)
+      .typeText(elements.filterBuckets, bucket3, { replace: true })
       .click(test3BucketBrowseButton)
       .wait(1500)
       .click(Selector(".ReactVirtualized__Table__rowColumn").withText("home"))

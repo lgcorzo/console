@@ -45,7 +45,7 @@ test
       await t
         .useRole(roles.admin)
         .click(acknowledgeButton)
-        .typeText(elements.filterBuckets, bucketName)
+        .typeText(elements.filterBuckets, bucketName, { replace: true })
         .wait(1500)
         .click(testBucketBrowseButton)
         .wait(1500)

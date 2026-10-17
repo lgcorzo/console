@@ -62,7 +62,7 @@ test
       await t
         .useRole(roles.conditions3)
         .click(acknowledgeButton)
-        .typeText(elements.filterBuckets, bucketName)
+        .typeText(elements.filterBuckets, bucketName, { replace: true })
         .click(bucketBrowseButton)
         .click(Selector(".ReactVirtualized__Table__rowColumn").withText("home"))
         .click(
@@ -104,7 +104,7 @@ test
       await t
         .useRole(roles.conditions4)
         .click(acknowledgeButton)
-        .typeText(elements.filterBuckets, bucketName2)
+        .typeText(elements.filterBuckets, bucketName2, { replace: true })
         .click(bucketBrowseButton2)
         .click(Selector("label").withText("Show deleted objects"))
         .wait(1500)

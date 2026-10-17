@@ -51,7 +51,7 @@ test
       await t
         .useRole(roles.admin)
         .click(acknowledgeButton)
-        .typeText(elements.filterBuckets, bucket1)
+        .typeText(elements.filterBuckets, bucket1, { replace: true })
         .click(test1BucketBrowseButton)
         .click(Selector(".ReactVirtualized__Table__rowColumn").withText("abc"))
         .click(Selector("#delete-element-click"))

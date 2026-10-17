@@ -62,10 +62,14 @@ __init__() {
   *) ;;
   esac
 
-  if command -v docker >/dev/null 2>&1; then
-    docker run --rm --entrypoint cat quay.io/minio/aistor/mc:latest /usr/bin/mc > mc
+  if command -v gh >/dev/null 2>&1; then
+    gh release download --repo minio/mc -p "mc.$OS-$ARCH.RELEASE*Z" -O mc || {
+      MC_URL=$(curl -sSfL https://api.github.com/repos/minio/mc/releases/latest | grep "browser_download_url.*mc\.$OS-$ARCH\.RELEASE.*Z" | cut -d : -f 2,3 | tr -d "[:space:]\"")
+      curl -sSfL "$MC_URL" -o mc
+    }
   else
-    curl -sSfL "https://dl.min.io/client/mc/release/$OS-$ARCH/mc" -o mc || true
+    MC_URL=$(curl -sSfL https://api.github.com/repos/minio/mc/releases/latest | grep "browser_download_url.*mc\.$OS-$ARCH\.RELEASE.*Z" | cut -d : -f 2,3 | tr -d "[:space:]\"")
+    curl -sSfL "$MC_URL" -o mc
   fi
   chmod +x mc
   sudo mv mc /usr/local/bin || mv mc /usr/local/bin

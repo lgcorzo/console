@@ -41,14 +41,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NVMRC }}
+          node-version-file: '.nvmrc'
+      - name: Enable Corepack
+        run: corepack enable
       - name: Setup git wrapper for Yarn
         run: |
           sudo tee /usr/local/bin/git << 'EOF'

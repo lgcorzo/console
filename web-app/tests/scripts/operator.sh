@@ -24,10 +24,16 @@ export CI
 sudo curl -#L "https://dl.k8s.io/release/v1.23.1/bin/linux/amd64/kubectl" -o /usr/local/bin/kubectl
 sudo chmod +x /usr/local/bin/kubectl
 
-if command -v docker >/dev/null 2>&1; then
-  docker run --rm --entrypoint cat quay.io/minio/aistor/mc:latest /usr/bin/mc | sudo tee /usr/local/bin/mc >/dev/null
+if command -v gh >/dev/null 2>&1; then
+  gh release download --repo minio/mc -p "mc.linux-amd64.RELEASE*Z" -O /tmp/mc || {
+    MC_URL=$(curl -sSfL https://api.github.com/repos/minio/mc/releases/latest | grep "browser_download_url.*mc\.linux-amd64\.RELEASE.*Z" | cut -d : -f 2,3 | tr -d "[:space:]\"")
+    curl -sSfL "$MC_URL" -o /tmp/mc
+  }
+  sudo mv /tmp/mc /usr/local/bin/mc
 else
-  sudo curl -#fL "https://dl.min.io/client/mc/release/linux-amd64/mc" -o /usr/local/bin/mc || true
+  MC_URL=$(curl -sSfL https://api.github.com/repos/minio/mc/releases/latest | grep "browser_download_url.*mc\.linux-amd64\.RELEASE.*Z" | cut -d : -f 2,3 | tr -d "[:space:]\"")
+  curl -sSfL "$MC_URL" -o /tmp/mc
+  sudo mv /tmp/mc /usr/local/bin/mc
 fi
 sudo chmod +x /usr/local/bin/mc
 

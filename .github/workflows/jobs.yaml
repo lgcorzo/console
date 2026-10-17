@@ -75,16 +75,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NVMRC }}
-          cache: "yarn"
-          cache-dependency-path: web-app/yarn.lock
+          node-version-file: '.nvmrc'
+      - name: Enable Corepack
+        run: corepack enable
       - uses: actions/cache@v4
         id: assets-cache
         name: Assets Cache
@@ -216,16 +211,13 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NVMRC }}
+          node-version-file: '.nvmrc'
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install MinIO JS
-        working-directory: ./
+        working-directory: ./web-app
         continue-on-error: false
         run: |
           yarn add minio
@@ -270,16 +262,13 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NVMRC }}
+          node-version-file: '.nvmrc'
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install MinIO JS
-        working-directory: ./
+        working-directory: ./web-app
         continue-on-error: false
         run: |
           yarn add minio
@@ -323,16 +312,13 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NVMRC }}
+          node-version-file: '.nvmrc'
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install MinIO JS
-        working-directory: ./
+        working-directory: ./web-app
         continue-on-error: false
         run: |
           yarn add minio
@@ -375,16 +361,13 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NVMRC }}
+          node-version-file: '.nvmrc'
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install MinIO JS
-        working-directory: ./
+        working-directory: ./web-app
         continue-on-error: false
         run: |
           yarn add minio
@@ -427,16 +410,13 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NVMRC }}
+          node-version-file: '.nvmrc'
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install MinIO JS
-        working-directory: ./
+        working-directory: ./web-app
         continue-on-error: false
         run: |
           yarn add minio
@@ -476,16 +456,13 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NVMRC }}
+          node-version-file: '.nvmrc'
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install MinIO JS
-        working-directory: ./
+        working-directory: ./web-app
         continue-on-error: false
         run: |
           yarn add minio
@@ -525,16 +502,13 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NVMRC }}
+          node-version-file: '.nvmrc'
+      - name: Enable Corepack
+        run: corepack enable
       - name: Install MinIO JS
-        working-directory: ./
+        working-directory: ./web-app
         continue-on-error: false
         run: |
           yarn add minio
@@ -699,7 +673,10 @@ jobs:
 
           echo "Create bucket for replication with versioning"
           echo "Download mc for Ubuntu"
-          docker run --rm --entrypoint cat quay.io/minio/aistor/mc:latest /usr/bin/mc > mc
+          GH_TOKEN="${{ github.token }}" gh release download --repo minio/mc -p "mc.linux-amd64.RELEASE*Z" -O mc || {
+            MC_URL=$(curl -sSfL https://api.github.com/repos/minio/mc/releases/latest | grep "browser_download_url.*mc\.linux-amd64\.RELEASE.*Z\"" | cut -d : -f 2,3 | tr -d "[:space:]\"")
+            curl -sSfL "$MC_URL" -o mc
+          }
           echo "Change the permissions to execute mc command"
           chmod +x mc
 
@@ -776,7 +753,10 @@ jobs:
           echo "put together the outs for final coverage resolution"
           ./gocovmerge ../integration/coverage/system.out ../api/coverage/coverage.out ../pkg/coverage/coverage-pkg.out > all.out
           echo "Download mc for Ubuntu"
-          docker run --rm --entrypoint cat quay.io/minio/aistor/mc:latest /usr/bin/mc > mc
+          GH_TOKEN="${{ github.token }}" gh release download --repo minio/mc -p "mc.linux-amd64.RELEASE*Z" -O mc || {
+            MC_URL=$(curl -sSfL https://api.github.com/repos/minio/mc/releases/latest | grep "browser_download_url.*mc\.linux-amd64\.RELEASE.*Z\"" | cut -d : -f 2,3 | tr -d "[:space:]\"")
+            curl -sSfL "$MC_URL" -o mc
+          }
           echo "Change the permissions to execute mc command"
           chmod +x mc
           echo "Only run our test if play is up and running"
@@ -785,7 +765,7 @@ jobs:
           then
             echo "Play is up and running, we will proceed with the play part for coverage"
             echo "Create the folder to put the all.out file"
-            ./mc mb --ignore-existing play/builds/
+            ./mc mb --ignore-existing play/builds/ || true
             echo "Copy the all.out file to play bucket"
             echo ${{ github.repository }}
             echo ${{ github.event.number }}
@@ -813,7 +793,7 @@ jobs:
             ./mc cp coverage-pkg.html play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
             ./mc cp ../pkg/coverage/coverage-pkg.out play/builds/${{ github.repository }}/${{ github.event.number }}/${{ github.run_id }}/ || true
             ./mc cp ../pkg/coverage/coverage-pkg.out play/builds/${{ github.repository }}/${{ github.event.number }}/latest/ || true
-            ./mc anonymous set public play/builds
+            ./mc anonymous set public play/builds || true
           else
             echo "Play is down, please report it on hack channel, no coverage is going to be uploaded!!!"
           fi
@@ -841,16 +821,11 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v4
-      - name: Read .nvmrc
-        id: node_version
-        run: echo "$(cat .nvmrc)" && echo "NVMRC=$(cat .nvmrc)" >> $GITHUB_ENV
-      - name: Enable Corepack
-        run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NVMRC }}
-          cache: "yarn"
-          cache-dependency-path: web-app/yarn.lock
+          node-version-file: '.nvmrc'
+      - name: Enable Corepack
+        run: corepack enable
       - uses: actions/cache@v4
         id: assets-cache-istanbul-coverage
         name: Assets Cache Istanbul Coverage
@@ -1071,11 +1046,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Enable Corepack
-        run: corepack enable
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version-file: '.nvmrc'
+      - name: Enable Corepack
+        run: corepack enable
 
       - name: Install dependencies
         run: |

@@ -68,6 +68,7 @@ This repository (`lgcorzo/console`) is actively maintained as a core component o
   - [Sovereign Maintenance & Dark Gravity Factory Integration](#sovereign-maintenance--dark-gravity-factory-integration)
   - [38-Repo Sovereign Ecosystem](#38-repo-sovereign-ecosystem)
   - [Automated CI/CD Maintenance Architecture](#automated-cicd-maintenance-architecture)
+  - [Single Sign-On (SSO / Keycloak) Integration](#single-sign-on-sso--keycloak-integration)
   - [Setup](#setup)
     - [1. Create a user `console` using `mc`](#1-create-a-user-console-using-mc)
     - [2. Create a policy for `console` with admin access to all resources (for testing)](#2-create-a-policy-for-console-with-admin-access-to-all-resources-for-testing)
@@ -80,6 +81,19 @@ This repository (`lgcorzo/console`) is actively maintained as a core component o
 <!-- markdown-toc end -->
 
 MinIO Console is a library that provides a management and browser UI overlay for the MinIO Server.
+
+---
+
+## Single Sign-On (SSO / Keycloak) Integration
+
+MinIO Console supports hybrid authentication, allowing users to authenticate either through standard access credentials or via **Single Sign-On (SSO)** backed by identity providers such as **Keycloak** or OAuth2/OIDC reverse proxies (`oauth2-proxy`).
+
+### Features:
+- **Dual Login Methods**: Users can log in using traditional Access Key / Secret Key credentials or initiate an automated OIDC SSO flow.
+- **Dynamic Identity Provider Routing**: Supports configurable backend `redirectRules` or defaults to `/oauth2/start?rd=/browser` for transparent Keycloak / OpenZiti integration.
+- **Zero Friction**: Clean UI integration with a prominent `— OR —` divider and dedicated SSO action button matching MinIO's Design System (`mds`).
+
+---
 
 ## Setup
 

@@ -16,9 +16,11 @@
 
 import React, { Fragment } from "react";
 import {
+  Box,
   Button,
   Grid,
   InputBox,
+  KeyIcon,
   LockFilledIcon,
   ProgressBar,
   UserFilledIcon,
@@ -121,6 +123,82 @@ const StrategyForm = ({ redirectRules }: { redirectRules: RedirectRule[] }) => {
             }}
           >
             {loginSending && <ProgressBar />}
+          </Grid>
+
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              margin: "24px 0 20px",
+              textAlign: "center",
+              "&::before, &::after": {
+                content: '""',
+                flex: 1,
+                borderBottom: "1px solid #3d4a5d",
+              },
+              "& span": {
+                margin: "0 12px",
+                color: "#7e8b9b",
+                fontSize: 12,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                fontWeight: 600,
+              },
+            }}
+          >
+            <span>OR</span>
+          </Box>
+
+          <Grid item xs={12}>
+            {redirectRules && redirectRules.length > 0 ? (
+              redirectRules.map((rule, idx) => (
+                <Button
+                  key={idx}
+                  type="button"
+                  variant="secondary"
+                  color="primary"
+                  id={`sso-login-${idx}`}
+                  disabled={loginSending}
+                  label={rule.displayName || "Log in with SSO"}
+                  icon={<KeyIcon />}
+                  iconLocation="start"
+                  onClick={() => {
+                    if (rule.redirect) {
+                      window.location.href = rule.redirect;
+                    }
+                  }}
+                  sx={{
+                    height: 40,
+                    width: "100%",
+                    boxShadow: "none",
+                    padding: "16px 30px",
+                    marginBottom: 8,
+                  }}
+                  fullWidth
+                />
+              ))
+            ) : (
+              <Button
+                type="button"
+                variant="secondary"
+                color="primary"
+                id="sso-login"
+                disabled={loginSending}
+                label={"Log in with SSO (Keycloak)"}
+                icon={<KeyIcon />}
+                iconLocation="start"
+                onClick={() => {
+                  window.location.href = "/oauth2/start?rd=/browser";
+                }}
+                sx={{
+                  height: 40,
+                  width: "100%",
+                  boxShadow: "none",
+                  padding: "16px 30px",
+                }}
+                fullWidth
+              />
+            )}
           </Grid>
         </Fragment>
       </form>

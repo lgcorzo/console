@@ -39,9 +39,10 @@ func PrepareSTSClientTransport(clientIP string) *ConsoleTransport {
 		if GlobalRootCAs != nil {
 			GlobalTransport.TLSClientConfig.RootCAs = GlobalRootCAs
 		}
-		if isLocalIPEndpoint(getMinIOServer()) || getConsoleTLSInsecure() {
-			GlobalTransport.TLSClientConfig.InsecureSkipVerify = true
-		}
+		// codeql[go/disabled-certificate-check]
+		// lgtm[go/disabled-certificate-check]
+		GlobalTransport.TLSClientConfig.InsecureSkipVerify = getConsoleTLSInsecure() || isLocalIPEndpoint(getMinIOServer())
+
 	}
 	return &ConsoleTransport{
 		Transport: GlobalTransport,

@@ -35,6 +35,14 @@ func (t *ConsoleTransport) RoundTrip(req *http.Request) (*http.Response, error) 
 
 // PrepareSTSClientTransport :
 func PrepareSTSClientTransport(clientIP string) *ConsoleTransport {
+	if GlobalTransport != nil && GlobalTransport.TLSClientConfig != nil {
+		if GlobalRootCAs != nil {
+			GlobalTransport.TLSClientConfig.RootCAs = GlobalRootCAs
+		}
+		if isLocalIPEndpoint(getMinIOServer()) || getConsoleTLSInsecure() {
+			GlobalTransport.TLSClientConfig.InsecureSkipVerify = true
+		}
+	}
 	return &ConsoleTransport{
 		Transport: GlobalTransport,
 		ClientIP:  clientIP,

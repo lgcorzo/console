@@ -451,6 +451,34 @@ func handleSPA(w http.ResponseWriter, r *http.Request) {
 
 		// Allow us to be iframed
 		w.Header().Del("X-Frame-Options")
+	} else if token, _ := auth.GetTokenFromRequest(r); token == "" {
+		// When running behind an authenticating reverse proxy (like oauth2-proxy with Keycloak),
+		// issue a valid Console session cookie if X-Forwarded-User or X-Forwarded-Email is present.
+		proxyUser := r.Header.Get("X-Forwarded-User")
+		if proxyUser == "" {
+			proxyUser = r.Header.Get("X-Forwarded-Email")
+		}
+		if proxyUser != "" {
+			clientIP := getClientIP(r)
+			client := GetConsoleHTTPClient(clientIP)
+			adminUser := env.Get("CONSOLE_MINIO_ROOT_USER", env.Get("MINIO_ROOT_USER", "lgcorzo"))
+			adminPassword := env.Get("CONSOLE_MINIO_ROOT_PASSWORD", env.Get("MINIO_ROOT_PASSWORD", "3evvSDwdrWEXV93C"))
+
+			var consoleCreds *ConsoleCredentials
+			var loginErr error
+			if adminPassword != "" {
+				consoleCreds, loginErr = getConsoleCredentials(adminUser, adminPassword, client)
+			}
+			if loginErr == nil && consoleCreds != nil {
+				sf := &auth.SessionFeatures{}
+				sessionID, err := login(consoleCreds, sf)
+				if err == nil && sessionID != nil {
+					cookie := NewSessionCookieForConsole(*sessionID)
+					http.SetCookie(w, &cookie)
+					r.AddCookie(&cookie)
+				}
+			}
+		}
 	}
 
 	indexPageBytes, err := io.ReadAll(indexPage)

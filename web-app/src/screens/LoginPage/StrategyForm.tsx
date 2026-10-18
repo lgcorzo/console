@@ -207,4 +207,3 @@ const StrategyForm = ({ redirectRules }: { redirectRules: RedirectRule[] }) => {
 };
 
 export default StrategyForm;
-

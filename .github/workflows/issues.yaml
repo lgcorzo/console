@@ -16,7 +16,7 @@ jobs:
     name: Add issue to project
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/add-to-project@v0.5.0
+      - uses: actions/add-to-project@v2
         with:
           project-url: https://github.com/orgs/miniohq/projects/2
-          github-token: ${{ secrets.BOT_PAT }}
+          github-token: ${{ secrets.BOT_PAT || secrets.ADD_TO_PROJECT_PAT || secrets.GITHUB_TOKEN }}

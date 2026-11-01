@@ -17,6 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/add-to-project@v2
+        continue-on-error: true
         with:
-          project-url: https://github.com/orgs/miniohq/projects/2
+          project-url: https://github.com/users/lgcorzo/projects/6
           github-token: ${{ secrets.BOT_PAT || secrets.ADD_TO_PROJECT_PAT || secrets.GITHUB_TOKEN }}

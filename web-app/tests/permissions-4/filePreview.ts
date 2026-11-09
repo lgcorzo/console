@@ -42,9 +42,23 @@ test
   })("File can be previewed", async (t) => {
     await t
       .useRole(roles.admin)
+      .navigateTo("http://localhost:9090/")
       .click(acknowledgeButton)
       .typeText(elements.filterBuckets, bucketName, { replace: true })
-      .wait(1500)
+      .wait(1500);
+
+    if (!(await bucketNameAction.exists)) {
+      await t.eval(() => window.location.reload());
+      await t.wait(2000);
+      if (await acknowledgeButton.exists) {
+        await t.click(acknowledgeButton);
+      }
+      await t
+        .typeText(elements.filterBuckets, bucketName, { replace: true })
+        .wait(1500);
+    }
+
+    await t
       .click(bucketNameAction)
       .click(file)
       .click(Selector(".objectActions button").withText("Preview"))

@@ -94,7 +94,7 @@
     "nth-check": "^2.0.1",
     "yaml": "^2.4.2",
     "postcss": "^8.5.29",
-    "fast-xml-parser": "^5.11.2",
+    "fast-xml-parser": "^5.12.0",
     "semver": "^7.5.2",
     "ws": "^8.17.1",
     "rollup": "^4.24.0",

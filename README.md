@@ -1,5 +1,8 @@
 # MinIO Console
 
+Maintained fork of [minio/console](https://github.com/minio/console) (archived upstream). It applies security patches and maintenance fixes on top of upstream. Part of the [Dark Gravity](https://github.com/lgcorzo/rust_CACD_autonomous_factory) factory. License: AGPLv3.
+
+
 ![build](https://github.com/lgcorzo/console/actions/workflows/jobs.yaml/badge.svg) ![license](https://img.shields.io/badge/license-AGPL%20V3-blue)
 
 A graphical user interface for [MinIO](https://github.com/lgcorzo/minio) maintained under the **Sovereign MinIO Ecosystem** by [@lgcorzo](https://github.com/lgcorzo).
@@ -98,8 +101,6 @@ MinIO Console supports hybrid authentication, allowing users to authenticate eit
 ## Setup
 
 All `console` needs is a MinIO user with admin privileges and URL pointing to your MinIO deployment.
-
-Maintained fork of [minio/console](https://github.com/minio/console) (archived upstream). It applies security patches and maintenance fixes on top of upstream. Part of the [Dark Gravity](https://github.com/lgcorzo/rust_CACD_autonomous_factory) factory. License: AGPLv3.
 
 > [!NOTE]
 > We don't recommend using MinIO's Operator Credentials

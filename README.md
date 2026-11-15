@@ -22,7 +22,7 @@ This repository (`lgcorzo/console`) is actively maintained as a core component o
 
 1. **Full Supply-Chain Autonomy**: Zero reliance on upstream breaking license changes or unannounced deprecations. Maintain complete ownership of operational UI tools and management capabilities.
 2. **Dark Gravity Factory Core Integration**: Essential component powering graphical bucket policy management, IAM administration, and observability dashboards for high-throughput AI storage and automated agent pipelines.
-3. **Compliance & Security**: Sovereign maintenance guaranteeing compliance with EU AI Act, SOC 2 Type II, ISO 25059, and strict zero-CVE SLAs.
+3. **Auditability & Security Maintenance**: Continuous vulnerability scanning and security patching designed to facilitate auditing and traceability.
 4. **Ecosystem Interoperability**: Direct seamless integration with all 38 repositories in `@lgcorzo` (MinIO Server, MC, KES, Operator, DirectPV, Console, SIMD acceleration libraries, etc.).
 
 ---
@@ -287,3 +287,10 @@ The detailed logging also includes all request and response headers (if any).
 # Contribute to console Project
 
 Please follow console [Contributor's Guide](https://github.com/lgcorzo/console/blob/master/CONTRIBUTING.md)
+
+---
+
+### Fork Maintenance & Agent Transparency
+
+- **Changes vs. Upstream:** Security dependency updates, CI/CD workflow fixes, and CodeQL remediation are tracked in the [commit history](../../commits) and [Pull Requests](../../pulls?q=is%3Apr).
+- **Agent Tagging (`[agent]`):** Commits and pull requests generated automatically by agents in the Dark Gravity pipeline are prefixed with `[agent]` to distinguish automated maintenance from manual work.
